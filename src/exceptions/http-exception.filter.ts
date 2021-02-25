@@ -1,5 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { Result } from 'src/dtos/result.dto';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -12,11 +13,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     response
       .status(status)
-      .json({
-        statusCode: status,
-        message: exception.getResponse(),
-        timestamp: new Date().toISOString(),
-        path: request.url
-      });
+      .json(
+        new Result(exception.message, false, null, null)
+      );
   }
 }

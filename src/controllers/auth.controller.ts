@@ -1,4 +1,4 @@
-import { Body, Controller, HttpException, HttpStatus, Post } from "@nestjs/common";
+import { Body, Controller, HttpCode, HttpException, HttpStatus, Post } from "@nestjs/common";
 import { LoginDTO } from "src/dtos/login.dto.ts";
 import { UserStatus } from "src/enums/user-status.enum";
 import { AuthService } from "src/services/auth.service";
@@ -11,6 +11,7 @@ export class AuthController {
 
 
   @Post()
+  @HttpCode(200)
   async login(@Body() model: LoginDTO): Promise<any> {
     const user = await this.usersService.findByUsernamePassword(model.username, model.password);
 

@@ -1,18 +1,22 @@
 import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { CreateUserDTO } from "src/dtos/create-user.dto";
+import { EmailDTO } from "src/dtos/email.dto";
 import { ResetPasswordDTO } from "src/dtos/reset-password.dto";
 import { UserStatus } from "src/enums/user-status.enum";
 import { DuplicateUserException } from "src/exceptions/duplica-user.exception";
-import { UserNotFoundException } from "src/exceptions/user-not-found.exception";
 import { User, UserDocument } from "src/schemas/user.schema";
+import { MailClient } from "./send-grid.service";
 
 @Injectable()
 export class UsersService {
 
   constructor(
-    @InjectModel('User') private readonly userModel: Model<UserDocument>
+    @InjectModel('User') private readonly userModel: Model<UserDocument>,
+    private mailClient: MailClient,
+    private configService: ConfigService
   ) { }
 
   async create(createUserDTO: CreateUserDTO): Promise<User> {
@@ -50,13 +54,16 @@ export class UsersService {
   }
 
   async updatePassword(resetPasswordDTO: ResetPasswordDTO) {
-    const user = await this.findByUsername(resetPasswordDTO.username);
-    if (!user) {
-      throw new UserNotFoundException();
-    }
-    return await this.userModel.findOneAndUpdate({
-      username: resetPasswordDTO.username
-    }, { password: resetPasswordDTO.password })
+    // const user = await this.findByUsername(resetPasswordDTO.username);
+    // if (!user) {
+    //   throw new UserNotFoundException();
+    // }
+    // return await this.userModel.findOneAndUpdate({
+    //   username: resetPasswordDTO.username
+    // }, { password: resetPasswordDTO.password })
+    const templateId = this.configService.get<string>('SEND_GRID_RESET_PASSWORD_TEMPLATE');
+    const mail = new EmailDTO('marcilio9590@gmail.com', templateId, { 'token': '123456' });
+    this.mailClient.sendEmail(mail);
   }
 
 }

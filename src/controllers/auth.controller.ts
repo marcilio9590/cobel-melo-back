@@ -1,8 +1,8 @@
 import { Body, Controller, HttpCode, HttpException, HttpStatus, Post } from "@nestjs/common";
-import { LoginDTO } from "src/dtos/login.dto.ts";
-import { UserStatus } from "src/enums/user-status.enum";
-import { AuthService } from "src/services/auth.service";
-import { UsersService } from "src/services/users.service";
+import { LoginDTO } from "../dtos/login.dto.ts";
+import { UserStatus } from "../enums/user-status.enum";
+import { AuthService } from "../services/auth.service";
+import { UsersService } from "../services/users.service";
 
 @Controller('/v1/auth')
 export class AuthController {

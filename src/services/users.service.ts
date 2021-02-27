@@ -2,12 +2,12 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { CreateUserDTO } from "src/dtos/create-user.dto";
-import { EmailDTO } from "src/dtos/email.dto";
-import { ResetPasswordDTO } from "src/dtos/reset-password.dto";
-import { UserStatus } from "src/enums/user-status.enum";
-import { DuplicateUserException } from "src/exceptions/duplica-user.exception";
-import { User, UserDocument } from "src/schemas/user.schema";
+import { CreateUserDTO } from "../dtos/create-user.dto";
+import { EmailDTO } from "../dtos/email.dto";
+import { ResetPasswordDTO } from "../dtos/reset-password.dto";
+import { UserStatus } from "../enums/user-status.enum";
+import { DuplicateUserException } from "../exceptions/duplica-user.exception";
+import { User, UserDocument } from "../schemas/user.schema";
 import { MailClient } from "./send-grid.service";
 
 @Injectable()

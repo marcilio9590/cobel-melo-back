@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppService } from './app.service';
 import { AuthController } from './controllers/auth.controller';
+import { TokensController } from './controllers/token.controller';
 import { UsersController } from './controllers/users.controller';
 import { SeedSchema } from './schemas/seed.schema';
 import { UserSchema } from './schemas/user.schema';
@@ -28,7 +29,7 @@ import { UsersService } from './services/users.service';
       expandVariables: true
     })
   ],
-  controllers: [UsersController, AuthController],
+  controllers: [UsersController, AuthController, TokensController],
   providers: [AppService, UsersService, AuthService, MailClient, TokenService],
 })
 export class AppModule { }

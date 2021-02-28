@@ -1,22 +1,18 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { UserNotFoundException } from "../exceptions/user-not-found.exception";
 import { CreateUserDTO } from "../dtos/create-user.dto";
-import { EmailDTO } from "../dtos/email.dto";
 import { ResetPasswordDTO } from "../dtos/reset-password.dto";
 import { UserStatus } from "../enums/user-status.enum";
 import { DuplicateUserException } from "../exceptions/duplica-user.exception";
 import { User, UserDocument } from "../schemas/user.schema";
-import { MailClient } from "./send-grid.service";
 
 @Injectable()
 export class UsersService {
 
   constructor(
-    @InjectModel('User') private readonly userModel: Model<UserDocument>,
-    private mailClient: MailClient,
-    private configService: ConfigService
+    @InjectModel('User') private readonly userModel: Model<UserDocument>
   ) { }
 
   async create(createUserDTO: CreateUserDTO): Promise<User> {
@@ -45,7 +41,7 @@ export class UsersService {
       .exec();
   }
 
-  async findByUsername(username): Promise<User> {
+  async findByUsername(username: string): Promise<UserDocument> {
     return await this.userModel
       .findOne({
         username: username,
@@ -53,17 +49,23 @@ export class UsersService {
       .exec();
   }
 
+  async findById(userId: string): Promise<User> {
+    const ObjectId = (require('mongoose').Types.ObjectId);
+    return await this.userModel
+      .findOne({
+        '_id': new ObjectId(userId),
+      })
+      .exec();
+  }
+
   async updatePassword(resetPasswordDTO: ResetPasswordDTO) {
-    // const user = await this.findByUsername(resetPasswordDTO.username);
-    // if (!user) {
-    //   throw new UserNotFoundException();
-    // }
-    // return await this.userModel.findOneAndUpdate({
-    //   username: resetPasswordDTO.username
-    // }, { password: resetPasswordDTO.password })
-    const templateId = this.configService.get<string>('SEND_GRID_RESET_PASSWORD_TEMPLATE');
-    const mail = new EmailDTO('marcilio9590@gmail.com', templateId, { 'token': '123456' });
-    this.mailClient.sendEmail(mail);
+    const user = await this.findByUsername(resetPasswordDTO.username);
+    if (!user) {
+      throw new UserNotFoundException();
+    }
+    return await this.userModel.findOneAndUpdate({
+      username: resetPasswordDTO.username
+    }, { password: resetPasswordDTO.password })
   }
 
 }

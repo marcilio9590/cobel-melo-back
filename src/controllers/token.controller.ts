@@ -12,9 +12,9 @@ export class TokensController {
   ) { }
 
   @Post('')
-  async getToken(@Query('userId') userId, @Res() res: Response) {
+  async getToken(@Query('username') username, @Res() res: Response) {
     //TODO: Remover este userId e pegar do token
-    await this.tokenService.getToken(userId);
+    await this.tokenService.getToken(username);
     res.status(HttpStatus.OK).send();
   }
 

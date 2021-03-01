@@ -20,10 +20,10 @@ export class UsersController {
     res.status(HttpStatus.CREATED).send();
   }
 
-  @Post('/reset-password')
+  @Post('/first-password')
   @UseInterceptors(OtpTokenInterceptor, new ValidatorInterceptor(new ResetPasswordContract()))
-  async updatePassword(@Body() resetPasswordDTO: ResetPasswordDTO, @Res() res: Response): Promise<any> {
-    await this.usersService.updatePassword(resetPasswordDTO);
+  async saveFisrstPassword(@Body() resetPasswordDTO: ResetPasswordDTO, @Res() res: Response): Promise<any> {
+    await this.usersService.saveFisrstPassword(resetPasswordDTO);
     res.status(HttpStatus.OK).send();
   }
 

@@ -1,11 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { UserNotFoundException } from "../exceptions/user-not-found.exception";
 import { CreateUserDTO } from "../dtos/create-user.dto";
 import { ResetPasswordDTO } from "../dtos/reset-password.dto";
 import { UserStatus } from "../enums/user-status.enum";
 import { DuplicateUserException } from "../exceptions/duplica-user.exception";
+import { UserAlreadyPasswordException } from "../exceptions/user-already-has-password.exception";
+import { UserNotFoundException } from "../exceptions/user-not-found.exception";
 import { User, UserDocument } from "../schemas/user.schema";
 
 @Injectable()
@@ -58,10 +59,12 @@ export class UsersService {
       .exec();
   }
 
-  async updatePassword(resetPasswordDTO: ResetPasswordDTO) {
+  async saveFisrstPassword(resetPasswordDTO: ResetPasswordDTO) {
     const user = await this.findByUsername(resetPasswordDTO.username);
     if (!user) {
       throw new UserNotFoundException();
+    } else if (user.password) {
+      throw new UserAlreadyPasswordException();
     }
     return await this.userModel.findOneAndUpdate({
       username: resetPasswordDTO.username

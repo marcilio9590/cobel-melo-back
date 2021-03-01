@@ -29,7 +29,7 @@ export class OtpTokenInterceptor implements NestInterceptor {
             false,
             null,
             null),
-          HttpStatus.BAD_REQUEST
+          HttpStatus.UNAUTHORIZED
         );
       }
     } catch (error) {

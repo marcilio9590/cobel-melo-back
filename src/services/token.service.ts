@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { totp } from 'otplib';
+import { UserNotFoundException } from '../exceptions/user-not-found.exception';
 import { EmailDTO } from '../dtos/email.dto';
 import { SeedNotFoundException } from '../exceptions/seed-not-found.exception';
 import { Seed, SeedDocument } from '../schemas/seed.schema';
@@ -27,14 +28,17 @@ export class TokenService {
     }
   }
 
-  async getToken(userId: string): Promise<string> {
-    let seed = await this.getSeedByUserId(userId);
+  async getToken(username: string): Promise<string> {
+    const user = await this.userService.findByUsername(username);
+    if (!user) {
+      throw new UserNotFoundException();
+    }
+    let seed = await this.getSeedByUserId(user._id.toString());
     if (!seed) {
-      const secret = this.secret.concat(userId);
-      seed = await this.saveSeed(userId, secret);
+      const secret = this.secret.concat(username);
+      seed = await this.saveSeed(username, secret);
     }
     const token = totp.generate(seed.secret);
-    const user = await this.userService.findById(userId);
     this.sendEmailWithToken(token, user.username);
     return token;
   }

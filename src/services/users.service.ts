@@ -47,6 +47,7 @@ export class UsersService {
       .findOne({
         username: username,
       })
+      .populate('-password')
       .exec();
   }
 
@@ -56,6 +57,7 @@ export class UsersService {
       .findOne({
         '_id': new ObjectId(userId),
       })
+      .populate('-password')
       .exec();
   }
 

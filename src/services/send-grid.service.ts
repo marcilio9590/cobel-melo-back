@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as sgMail from '@sendgrid/mail';
+import { applicationConstants } from '../constants/constants';
 import { EmailDTO } from '../dtos/email.dto';
 
 @Injectable()
@@ -8,8 +9,7 @@ export class MailClient {
 
   constructor(private configService: ConfigService) {
     // const key = this.configService.get<string>('SEND_GRID_KEY');
-    const key = process.env.ENV_SEND_GRID_KEY;
-    sgMail.setApiKey(key);
+    sgMail.setApiKey(applicationConstants.sendGridKey);
   }
 
   sendEmail(mail: EmailDTO) {

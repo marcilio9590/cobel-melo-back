@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, HttpException, HttpStatus, Injectable, NestInterceptor } from "@nestjs/common";
 import { Observable } from "rxjs";
-import { UserDocument } from "src/schemas/user.schema";
+import { UserDocument } from "../schemas/user.schema";
 import { ResetPasswordDTO } from "../dtos/reset-password.dto";
 import { Result } from "../dtos/result.dto";
 import { TokenService } from "../services/token.service";

@@ -7,7 +7,7 @@ import { UserStatus } from "../enums/user-status.enum";
 import { DuplicateUserException } from "../exceptions/duplica-user.exception";
 import { UserAlreadyPasswordException } from "../exceptions/user-already-has-password.exception";
 import { UserNotFoundException } from "../exceptions/user-not-found.exception";
-import { User, UserDocument } from "../schemas/user.schema";
+import { UserDocument } from "../schemas/user.schema";
 
 @Injectable()
 export class UsersService {
@@ -16,7 +16,7 @@ export class UsersService {
     @InjectModel('User') private readonly userModel: Model<UserDocument>
   ) { }
 
-  async create(createUserDTO: CreateUserDTO): Promise<User> {
+  async create(createUserDTO: CreateUserDTO): Promise<UserDocument> {
     createUserDTO.status = UserStatus.INITIAL;
     const createdUser = await new this.userModel(createUserDTO);
     let response;
@@ -33,7 +33,7 @@ export class UsersService {
     return response;
   }
 
-  async findByUsernamePassword(username, password): Promise<User> {
+  async findByUsernamePassword(username, password): Promise<UserDocument> {
     return await this.userModel
       .findOne({
         username: username,
@@ -51,7 +51,7 @@ export class UsersService {
       .exec();
   }
 
-  async findById(userId: string): Promise<User> {
+  async findById(userId: string): Promise<UserDocument> {
     const ObjectId = (require('mongoose').Types.ObjectId);
     return await this.userModel
       .findOne({

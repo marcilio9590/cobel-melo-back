@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { PaginateModel } from 'mongoose-paginate-v2';
 import { CreateUserDTO } from "../dtos/create-user.dto";
 import { ResetPasswordDTO } from "../dtos/reset-password.dto";
 import { UserStatus } from "../enums/user-status.enum";
@@ -12,8 +12,10 @@ import { UserDocument } from "../schemas/user.schema";
 @Injectable()
 export class UsersService {
 
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
-    @InjectModel('User') private readonly userModel: Model<UserDocument>
+    @InjectModel('User') private readonly userModel: PaginateModel<UserDocument>
   ) { }
 
   async create(createUserDTO: CreateUserDTO): Promise<UserDocument> {
@@ -71,6 +73,22 @@ export class UsersService {
     return await this.userModel.findOneAndUpdate({
       username: resetPasswordDTO.username
     }, { password: resetPasswordDTO.password })
+  }
+
+  async getUsers(page, size) {
+    const limit = (page * size);
+    const options = {
+      select: ['-password'],
+      page: page,
+      limit: limit,
+    };
+    try {
+      return await this.userModel.paginate({}, options);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+
+    }
   }
 
 }

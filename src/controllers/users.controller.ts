@@ -1,5 +1,6 @@
-import { Body, Controller, HttpStatus, Post, Res, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, HttpStatus, Post, Query, Res, UseInterceptors } from "@nestjs/common";
 import { Response } from 'express';
+import { Result } from "../dtos/result.dto";
 import { ResetPasswordContract } from "../contracts/users/reset-password.contract";
 import { CreateUserDTO } from "../dtos/create-user.dto";
 import { ResetPasswordDTO } from "../dtos/reset-password.dto";
@@ -26,5 +27,13 @@ export class UsersController {
     await this.usersService.saveFisrstPassword(resetPasswordDTO);
     res.status(HttpStatus.OK).send();
   }
+
+  @Get()
+  async getUsers(@Res() res: Response, @Query('page') page: Number, @Query('size') size: Number): Promise<any> {
+    const users = await this.usersService.getUsers(page, size);
+    const result = new Result('', true, users, null);
+    res.status(HttpStatus.PARTIAL_CONTENT).send(result);
+  }
+
 
 }

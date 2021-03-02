@@ -10,9 +10,10 @@ export class AuthService {
   createToken(user: UserDocument) {
     const payload = {
       id: user._id,
-      username: user.username
+      username: user.username,
+      name: user.name.split(" ")[0]
     }
-    return { access_token: this.jwtService.sign(payload) };
+    return { access_token: this.jwtService.sign(payload), ...payload };
   }
 
 }

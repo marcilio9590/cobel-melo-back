@@ -12,8 +12,6 @@ import { UserDocument } from "../schemas/user.schema";
 @Injectable()
 export class UsersService {
 
-  private readonly logger = new Logger(UsersService.name);
-
   constructor(
     @InjectModel('User') private readonly userModel: PaginateModel<UserDocument>
   ) { }
@@ -78,14 +76,20 @@ export class UsersService {
   async getUsers(page, size) {
     const limit = (page * size);
     const options = {
-      select: ['-password'],
+      select: [
+        '_id',
+        'name',
+        'username',
+        'cpf',
+        'profileType'
+      ],
       page: page,
       limit: limit,
     };
     try {
       return await this.userModel.paginate({}, options);
     } catch (error) {
-      this.logger.error(error);
+      console.error(error);
       throw error;
 
     }

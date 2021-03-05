@@ -9,7 +9,7 @@ import { AuthController } from './controllers/auth.controller';
 import { TokensController } from './controllers/token.controller';
 import { UsersController } from './controllers/users.controller';
 import { SeedSchema } from './schemas/seed.schema';
-import { UserSchema } from './schemas/user.schema';
+import UserSchema from './schemas/user.schema';
 import { AuthService } from './services/auth.service';
 import { MailClient } from './services/send-grid.service';
 import { TokenService } from './services/token.service';

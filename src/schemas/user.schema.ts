@@ -30,4 +30,14 @@ export class User {
 
 }
 
-export const UserSchema = SchemaFactory.createForClass(User).plugin(mongoosePaginate);
+const UserSchema = SchemaFactory.createForClass(User).plugin(mongoosePaginate);
+
+UserSchema.virtual('id').get(function () {
+  return this._id.toHexString();
+});
+
+UserSchema.set('toJSON', {
+  virtuals: true
+});
+
+export default UserSchema;

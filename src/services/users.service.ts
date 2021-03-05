@@ -78,17 +78,17 @@ export class UsersService {
   }
 
   async getUsers(page, size) {
-    const limit = (page * size);
     const options = {
       select: [
         '_id',
         'name',
         'username',
         'cpf',
-        'profileType'
+        'profileType',
+        'status'
       ],
       page: page,
-      limit: limit,
+      limit: size,
     };
     try {
       return await this.userModel.paginate({}, options);

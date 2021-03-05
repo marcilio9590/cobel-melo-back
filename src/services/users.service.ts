@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
 import { CreateUserDTO } from "../dtos/create-user.dto";
@@ -74,7 +74,7 @@ export class UsersService {
     }, {
       password: resetPasswordDTO.password,
       status: UserStatus.ACTIVE
-    })
+    });
   }
 
   async getUsers(page, size) {
@@ -96,6 +96,15 @@ export class UsersService {
       console.error(error);
       throw error;
 
+    }
+  }
+
+  async deleteUser(userId: string) {
+    try {
+      await this.userModel.findByIdAndUpdate(userId, { status: UserStatus.INACTIVE });
+    } catch (error) {
+      console.error("Ocorreu um erro ao processar sua requisição", error);
+      throw error;
     }
   }
 

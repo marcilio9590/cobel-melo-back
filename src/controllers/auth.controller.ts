@@ -15,6 +15,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @HttpCode(200)
   async login(@Body() model: LoginDTO): Promise<any> {
+
     const user = await this.usersService.findByUsernamePassword(model.username, model.password);
 
     if (user.status === UserStatus.INITIAL) {

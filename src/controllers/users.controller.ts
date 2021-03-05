@@ -1,9 +1,9 @@
-import { Body, Controller, Get, HttpStatus, Post, Query, Res, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Query, Res, UseInterceptors } from "@nestjs/common";
 import { Response } from 'express';
-import { Result } from "../dtos/result.dto";
 import { ResetPasswordContract } from "../contracts/users/reset-password.contract";
 import { CreateUserDTO } from "../dtos/create-user.dto";
 import { ResetPasswordDTO } from "../dtos/reset-password.dto";
+import { Result } from "../dtos/result.dto";
 import { OtpTokenInterceptor } from "../interceptors/otp.token.interceptor";
 import { ValidatorInterceptor } from "../interceptors/validator.interceptor";
 import { UsersService } from "../services/users.service";
@@ -35,5 +35,10 @@ export class UsersController {
     res.status(HttpStatus.PARTIAL_CONTENT).send(result);
   }
 
+  @Delete('/:userId')
+  async deleteUser(@Res() res: Response, @Param('userId') userId: string): Promise<any> {
+    await this.usersService.deleteUser(userId);
+    res.status(HttpStatus.NO_CONTENT).send();
+  }
 
 }

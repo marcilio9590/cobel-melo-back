@@ -23,6 +23,7 @@ export class UsersService {
     try {
       response = await createdUser.save()
     } catch (exception) {
+      console.error("Ocorre um erro ao processua esta ação", exception);
       switch (exception.code) {
         case 11000:
           throw new DuplicateUserException();
@@ -70,7 +71,10 @@ export class UsersService {
     }
     return await this.userModel.findOneAndUpdate({
       username: resetPasswordDTO.username
-    }, { password: resetPasswordDTO.password })
+    }, {
+      password: resetPasswordDTO.password,
+      status: UserStatus.ACTIVE
+    })
   }
 
   async getUsers(page, size) {

@@ -7,7 +7,7 @@ export type UserDocument = User & Document;
 @Schema()
 export class User {
 
-  @Prop({ unique: true })
+  @Prop({ unique: true, sparse: true })
   username: string;
 
   @Prop()

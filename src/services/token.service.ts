@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { totp } from 'otplib';
-import { UserNotFoundException } from '../exceptions/user-not-found.exception';
 import { EmailDTO } from '../dtos/email.dto';
 import { SeedNotFoundException } from '../exceptions/seed-not-found.exception';
+import { UserNotFoundException } from '../exceptions/user-not-found.exception';
 import { Seed, SeedDocument } from '../schemas/seed.schema';
 import { MailClient } from './send-grid.service';
 import { UsersService } from './users.service';
@@ -29,18 +29,23 @@ export class TokenService {
   }
 
   async getToken(username: string): Promise<string> {
-    const user = await this.userService.findByUsername(username);
-    if (!user) {
-      throw new UserNotFoundException();
+    try {
+      const user = await this.userService.findByUsername(username);
+      if (!user) {
+        throw new UserNotFoundException();
+      }
+      let seed = await this.getSeedByUserId(user._id.toString());
+      if (!seed) {
+        const secret = this.secret.concat(user._id);
+        seed = await this.saveSeed(user._id, secret);
+      }
+      const token = totp.generate(seed.secret);
+      this.sendEmailWithToken(token, user.username);
+      return token;
+    } catch (error) {
+      console.error("Ocorreu um erro ao processar esta ação", error);
+      throw error;
     }
-    let seed = await this.getSeedByUserId(user._id.toString());
-    if (!seed) {
-      const secret = this.secret.concat(username);
-      seed = await this.saveSeed(username, secret);
-    }
-    const token = totp.generate(seed.secret);
-    this.sendEmailWithToken(token, user.username);
-    return token;
   }
 
   async validateToken(token: string, userId: string): Promise<boolean> {

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
-import { CreateUserDTO } from "../dtos/create-user.dto";
+import { UserDTO } from "../dtos/create-user.dto";
 import { ResetPasswordDTO } from "../dtos/reset-password.dto";
 import { UserStatus } from "../enums/user-status.enum";
 import { DuplicateUserException } from "../exceptions/duplica-user.exception";
@@ -16,7 +16,7 @@ export class UsersService {
     @InjectModel('User') private readonly userModel: PaginateModel<UserDocument>
   ) { }
 
-  async create(createUserDTO: CreateUserDTO): Promise<UserDocument> {
+  async create(createUserDTO: UserDTO): Promise<UserDocument> {
     createUserDTO.status = UserStatus.INITIAL;
     const createdUser = await new this.userModel(createUserDTO);
     let response;
@@ -102,6 +102,15 @@ export class UsersService {
   async deleteUser(userId: string) {
     try {
       await this.userModel.findByIdAndUpdate(userId, { status: UserStatus.INACTIVE });
+    } catch (error) {
+      console.error("Ocorreu um erro ao processar sua requisição", error);
+      throw error;
+    }
+  }
+
+  async update(userId: string, userDTO: UserDTO) {
+    try {
+      await this.userModel.findByIdAndUpdate(userId, userDTO);
     } catch (error) {
       console.error("Ocorreu um erro ao processar sua requisição", error);
       throw error;

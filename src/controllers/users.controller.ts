@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Query, Res, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query, Res, UseInterceptors } from "@nestjs/common";
 import { Response } from 'express';
 import { ResetPasswordContract } from "../contracts/users/reset-password.contract";
-import { CreateUserDTO } from "../dtos/create-user.dto";
+import { UserDTO } from "../dtos/create-user.dto";
 import { ResetPasswordDTO } from "../dtos/reset-password.dto";
 import { Result } from "../dtos/result.dto";
 import { OtpTokenInterceptor } from "../interceptors/otp.token.interceptor";
@@ -16,9 +16,15 @@ export class UsersController {
   ) { }
 
   @Post()
-  async create(@Body() userDTO: CreateUserDTO, @Res() res: Response): Promise<any> {
+  async create(@Body() userDTO: UserDTO, @Res() res: Response): Promise<any> {
     await this.usersService.create(userDTO);
     res.status(HttpStatus.CREATED).send();
+  }
+
+  @Put('/:userId')
+  async update(@Param('userId') userId: string, @Body() userDTO: UserDTO, @Res() res: Response): Promise<any> {
+    await this.usersService.update(userId, userDTO);
+    res.status(HttpStatus.OK).send();
   }
 
   @Post('/first-password')

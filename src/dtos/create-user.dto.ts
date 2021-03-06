@@ -1,6 +1,6 @@
 import { UserStatus } from "../enums/user-status.enum";
 
-export class CreateUserDTO {
+export class UserDTO {
   constructor(
     public username: string,
     public cpf: string,

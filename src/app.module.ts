@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
@@ -8,6 +9,7 @@ import { jwtConstants } from './constants/constants';
 import { AuthController } from './controllers/auth.controller';
 import { TokensController } from './controllers/token.controller';
 import { UsersController } from './controllers/users.controller';
+import { ProfileGuard } from './guards/profile.guard';
 import { SeedSchema } from './schemas/seed.schema';
 import UserSchema from './schemas/user.schema';
 import { AuthService } from './services/auth.service';
@@ -40,7 +42,10 @@ import { LocalStrategy } from './strategies/local.strategy';
     }),
   ],
   controllers: [UsersController, AuthController, TokensController],
-  providers: [AppService, UsersService, AuthService, MailClient, TokenService, LocalStrategy, JwtStrategy],
+  providers: [AppService, UsersService, AuthService, MailClient, TokenService, LocalStrategy, JwtStrategy, {
+    provide: APP_GUARD,
+    useClass: ProfileGuard,
+  }],
   exports: [JwtModule]
 })
 export class AppModule { }

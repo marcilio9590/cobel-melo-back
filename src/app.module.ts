@@ -7,12 +7,15 @@ import { PassportModule } from '@nestjs/passport';
 import { AppService } from './app.service';
 import { jwtConstants } from './constants/constants';
 import { AuthController } from './controllers/auth.controller';
+import { CustomersController } from './controllers/customers.controller';
 import { TokensController } from './controllers/token.controller';
 import { UsersController } from './controllers/users.controller';
 import { ProfileGuard } from './guards/profile.guard';
+import CustomerSchema from './schemas/customer.schema';
 import { SeedSchema } from './schemas/seed.schema';
 import UserSchema from './schemas/user.schema';
 import { AuthService } from './services/auth.service';
+import { CustomersService } from './services/customers.service';
 import { MailClient } from './services/send-grid.service';
 import { TokenService } from './services/token.service';
 import { UsersService } from './services/users.service';
@@ -30,6 +33,10 @@ import { LocalStrategy } from './strategies/local.strategy';
       {
         name: 'Seed',
         schema: SeedSchema
+      },
+      {
+        name: 'Customer',
+        schema: CustomerSchema
       }
     ]),
     ConfigModule.forRoot({
@@ -41,11 +48,13 @@ import { LocalStrategy } from './strategies/local.strategy';
       signOptions: { expiresIn: '60s' },
     }),
   ],
-  controllers: [UsersController, AuthController, TokensController],
-  providers: [AppService, UsersService, AuthService, MailClient, TokenService, LocalStrategy, JwtStrategy, {
-    provide: APP_GUARD,
-    useClass: ProfileGuard,
-  }],
+  controllers: [UsersController, AuthController, TokensController, CustomersController],
+  providers: [AppService, UsersService, AuthService, MailClient, TokenService, LocalStrategy, JwtStrategy, CustomersService,
+    {
+      provide: APP_GUARD,
+      useClass: ProfileGuard,
+    }
+  ],
   exports: [JwtModule]
 })
 export class AppModule { }

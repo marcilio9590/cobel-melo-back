@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
-import { UserDTO } from "../dtos/create-user.dto";
+import { UserDTO } from "../dtos/user.dto";
 import { ResetPasswordDTO } from "../dtos/reset-password.dto";
 import { UserStatus } from "../enums/user-status.enum";
 import { DuplicateUserException } from "../exceptions/duplica-user.exception";

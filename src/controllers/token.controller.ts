@@ -13,7 +13,6 @@ export class TokensController {
 
   @Post('')
   async getToken(@Query('username') username, @Res() res: Response) {
-    //TODO: Remover este userId e pegar do token
     await this.tokenService.getToken(username);
     res.status(HttpStatus.OK).send();
   }

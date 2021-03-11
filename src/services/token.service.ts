@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { totp } from 'otplib';
+import { otpConstants } from '../constants/constants';
 import { EmailDTO } from '../dtos/email.dto';
 import { SeedNotFoundException } from '../exceptions/seed-not-found.exception';
 import { UserNotFoundException } from '../exceptions/user-not-found.exception';
@@ -12,9 +13,6 @@ import { UsersService } from './users.service';
 
 @Injectable()
 export class TokenService {
-
-  //TODO: Substituir por variavel de ambiente
-  private secret: string = 'gOXzEcx1azsYf6NUGL5ldxOfvmCbl6kh';
 
   constructor(
     @InjectModel('Seed') private readonly seedModel: Model<SeedDocument>,
@@ -36,7 +34,7 @@ export class TokenService {
       }
       let seed = await this.getSeedByUserId(user._id.toString());
       if (!seed) {
-        const secret = this.secret.concat(user._id);
+        const secret = otpConstants.secret.concat(user._id);
         seed = await this.saveSeed(user._id, secret);
       }
       const token = totp.generate(seed.secret);

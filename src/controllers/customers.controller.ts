@@ -41,4 +41,18 @@ export class CustomersController {
     res.status(HttpStatus.NO_CONTENT).send();
   }
 
+  @Get('/:customerId')
+  async getCustomer(@Res() res: Response, @Param('customerId') customerId: string): Promise<any> {
+    const customer = await this.customersService.getCustomer(customerId);
+    const result = new Result('', true, customer, null);
+    res.status(HttpStatus.OK).send(result);
+  }
+
+  @Get('/:customerId/process')
+  async getCustomerProcess(@Res() res: Response, @Param('customerId') customerId: string): Promise<any> {
+    const process = await this.customersService.getCustomerProcess(customerId);
+    const result = new Result('', true, process, null);
+    res.status(HttpStatus.OK).send(result);
+  }
+
 }

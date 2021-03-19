@@ -5,12 +5,15 @@ import { CustomerDTO } from "../dtos/customer.dto";
 import { DuplicateUserException } from "../exceptions/duplica-user.exception";
 import { CustomerDocument } from "../schemas/customer.schema";
 import { UserDocument } from "../schemas/user.schema";
+import { ProcessService } from "./process.service";
 
 @Injectable()
 export class CustomersService {
 
   constructor(
-    @InjectModel('Customer') private readonly customerModel: PaginateModel<CustomerDocument>
+    @InjectModel('Customer') private readonly customerModel: PaginateModel<CustomerDocument>,
+    private processService: ProcessService,
+
   ) { }
 
   async create(customerDTO: CustomerDTO): Promise<UserDocument> {
@@ -67,6 +70,24 @@ export class CustomersService {
   async update(customerId: string, customerDTO: CustomerDTO) {
     try {
       await this.customerModel.findByIdAndUpdate(customerId, customerDTO);
+    } catch (error) {
+      console.error("Ocorreu um erro ao processar sua requisição", error);
+      throw error;
+    }
+  }
+
+  async getCustomer(customerId: string) {
+    try {
+      return await this.customerModel.findById(customerId);
+    } catch (error) {
+      console.error("Ocorreu um erro ao processar sua requisição", error);
+      throw error;
+    }
+  }
+
+  async getCustomerProcess(customerId: string) {
+    try {
+      return await this.processService.getProcessByCustomer(customerId);
     } catch (error) {
       console.error("Ocorreu um erro ao processar sua requisição", error);
       throw error;

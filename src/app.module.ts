@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { jwtConstants } from './constants/constants';
 import { AuthController } from './controllers/auth.controller';
 import { CustomersController } from './controllers/customers.controller';
+import { ProcessAreaController } from './controllers/process-area.controller';
 import { ProcessController } from './controllers/process.controller';
 import { TokensController } from './controllers/token.controller';
 import { UsersController } from './controllers/users.controller';
@@ -21,6 +22,7 @@ import { SeedSchema } from './schemas/seed.schema';
 import UserSchema from './schemas/user.schema';
 import { AuthService } from './services/auth.service';
 import { CustomersService } from './services/customers.service';
+import { ProcessAreaService } from './services/process-area.service';
 import { ProcessService } from './services/process.service';
 import { MailClient } from './services/send-grid.service';
 import { TokenService } from './services/token.service';
@@ -30,7 +32,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/cobel_melo'),
+    MongooseModule.forRoot('mongodb://localhost/cobel_melo', { useFindAndModify: false }),
     MongooseModule.forFeature([
       {
         name: 'User',
@@ -70,8 +72,8 @@ import { LocalStrategy } from './strategies/local.strategy';
       signOptions: { expiresIn: '60s' },
     }),
   ],
-  controllers: [UsersController, AuthController, TokensController, CustomersController, ProcessController],
-  providers: [AppService, UsersService, AuthService, MailClient, TokenService, LocalStrategy, JwtStrategy, CustomersService, ProcessService,
+  controllers: [UsersController, AuthController, TokensController, CustomersController, ProcessController, ProcessAreaController],
+  providers: [AppService, UsersService, AuthService, MailClient, TokenService, LocalStrategy, JwtStrategy, CustomersService, ProcessService, ProcessAreaService,
     {
       provide: APP_GUARD,
       useClass: ProfileGuard,

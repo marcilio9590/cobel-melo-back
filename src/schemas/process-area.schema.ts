@@ -8,7 +8,7 @@ export type ProcessAreaDocument = ProcessArea & Document;
 export class ProcessArea {
 
   @Prop()
-  name: string;
+  description: string;
 
 }
 

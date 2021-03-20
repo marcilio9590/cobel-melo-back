@@ -49,8 +49,8 @@ export class CustomersController {
     res.status(HttpStatus.NO_CONTENT).send();
   }
 
-  @Get('?name=:name')
-  async getCustomersByName(@Res() res: Response, @Query('name') name: string): Promise<any> {
+  @Get('/:name')
+  async getCustomersByName(@Res() res: Response, @Param('name') name: string): Promise<any> {
     const customers = await this.customersService.getCustomersByName(name);
     const result = new Result('', true, customers, null);
     res.status(HttpStatus.OK).send(result);

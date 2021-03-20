@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
 import { CustomerDTO } from "../dtos/customer.dto";
 import { DuplicateUserException } from "../exceptions/duplica-user.exception";
@@ -11,13 +12,14 @@ import { ProcessService } from "./process.service";
 export class CustomersService {
 
   constructor(
-    @InjectModel('Customer') private readonly customerModel: PaginateModel<CustomerDocument>,
+    @InjectModel('Customer') private readonly customerPaginateModel: PaginateModel<CustomerDocument>,
+    @InjectModel('Customer') private readonly customerModel: Model<CustomerDocument>,
     private processService: ProcessService,
 
   ) { }
 
   async create(customerDTO: CustomerDTO): Promise<UserDocument> {
-    const createdUser = await new this.customerModel(customerDTO);
+    const createdUser = await new this.customerPaginateModel(customerDTO);
     let response;
     try {
       response = await createdUser.save()
@@ -47,16 +49,15 @@ export class CustomersService {
       limit: size,
     };
     try {
-      return await this.customerModel.paginate({}, options);
+      return await this.customerPaginateModel.paginate({}, options);
     } catch (error) {
       console.error(error);
       throw error;
-
     }
   }
 
   async deleteCustomer(customerId: string) {
-    await this.customerModel.remove({ _id: customerId }, function (err) {
+    await this.customerPaginateModel.remove({ _id: customerId }, function (err) {
       if (!err) {
         return;
       }
@@ -69,7 +70,7 @@ export class CustomersService {
 
   async update(customerId: string, customerDTO: CustomerDTO) {
     try {
-      await this.customerModel.findByIdAndUpdate(customerId, customerDTO);
+      await this.customerPaginateModel.findByIdAndUpdate(customerId, customerDTO);
     } catch (error) {
       console.error("Ocorreu um erro ao processar sua requisição", error);
       throw error;
@@ -78,7 +79,7 @@ export class CustomersService {
 
   async getCustomer(customerId: string) {
     try {
-      return await this.customerModel.findById(customerId);
+      return await this.customerPaginateModel.findById(customerId);
     } catch (error) {
       console.error("Ocorreu um erro ao processar sua requisição", error);
       throw error;
@@ -96,7 +97,7 @@ export class CustomersService {
 
   async getCustomersByName(name: string) {
     try {
-      return await this.customerModel.find({ name: name }).exec();
+      return await this.customerModel.find({ name: { $regex: '.*' + name + '.*', $options: 'i' } }).select('_id name').exec();
     } catch (error) {
       console.error("Ocorreu um erro ao processar sua requisição", error);
       throw error;

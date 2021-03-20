@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
-import { CreateProcessDTO } from "../dtos/create-process.dto";
+import { ProcessDTO } from "../dtos/create-process.dto";
 import { ProcessDocument } from "../schemas/process.schema";
 
 @Injectable()
@@ -22,14 +22,14 @@ export class ProcessService {
 
   async getProcessDetail(processId: string) {
     try {
-      return await this.processModel.findById(processId).populate('customer').exec();
+      return await this.processModel.findById(processId).populate('customer processArea').exec();
     } catch (error) {
       console.error("Ocorreu um erro ao processar sua requisição", error);
       throw error;
     }
   }
 
-  async create(createProcessDTO: CreateProcessDTO) {
+  async create(createProcessDTO: ProcessDTO) {
     let response;
     try {
       const createdProcess = await new this.processModel(createProcessDTO);
@@ -39,6 +39,54 @@ export class ProcessService {
       throw exception;
     }
     return response;
+  }
+
+  async deleteMovement(id: string, movementId: string) {
+    //TODO: Estudar como fazer este delete
+    throw new Error("Method not implemented.");
+  }
+
+  async delete(id: string) {
+    await this.processModel.remove({ _id: id }, function (err) {
+      if (!err) {
+        return;
+      }
+      else {
+        console.error("Ocorreu um erro ao processar sua requisição", err);
+        throw err;
+      }
+    });
+  }
+
+  async update(id: string, processDTO: ProcessDTO) {
+    try {
+      await this.processModel.findByIdAndUpdate(id, processDTO);
+    } catch (error) {
+      console.error("Ocorreu um erro ao processar sua requisição", error);
+      throw error;
+    }
+  }
+
+  async paginate(page, size) {
+    const options = {
+      populate: 'customer',
+      select: [
+        '_id',
+        'customer',
+        'description',
+        'number',
+        'valueOfCase'
+      ],
+      page: page,
+      limit: size,
+    };
+    try {
+      return await this.processModel.paginate({}, options);
+    } catch (error) {
+      console.error(error);
+      throw error;
+
+    }
   }
 
 }

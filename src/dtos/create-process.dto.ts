@@ -1,5 +1,5 @@
 
-export class CreateProcessDTO {
+export class ProcessDTO {
 
   constructor(
     public customer: string,

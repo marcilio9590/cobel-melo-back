@@ -94,4 +94,13 @@ export class CustomersService {
     }
   }
 
+  async getCustomersByName(name: string) {
+    try {
+      return await this.customerModel.find({ name: name }).exec();
+    } catch (error) {
+      console.error("Ocorreu um erro ao processar sua requisição", error);
+      throw error;
+    }
+  }
+
 }

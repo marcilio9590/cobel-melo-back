@@ -13,6 +13,20 @@ export class CustomersController {
     private customersService: CustomersService,
   ) { }
 
+  @Get()
+  async getCustomers(@Res() res: Response, @Query('page') page: Number, @Query('size') size: Number): Promise<any> {
+    const customers = await this.customersService.getCustomers(page, size);
+    const result = new Result('', true, customers, null);
+    res.status(HttpStatus.PARTIAL_CONTENT).send(result);
+  }
+
+  @Get('/:customerId/process')
+  async getCustomerProcess(@Res() res: Response, @Param('customerId') customerId: string): Promise<any> {
+    const process = await this.customersService.getCustomerProcess(customerId);
+    const result = new Result('', true, process, null);
+    res.status(HttpStatus.OK).send(result);
+  }
+
   @Post()
   @Profile([ProfileTypes.EDIT, ProfileTypes.ADMIN])
   async create(@Body() customerDTO: CustomerDTO, @Res() res: Response): Promise<any> {
@@ -27,12 +41,6 @@ export class CustomersController {
     res.status(HttpStatus.OK).send();
   }
 
-  @Get()
-  async getCustomers(@Res() res: Response, @Query('page') page: Number, @Query('size') size: Number): Promise<any> {
-    const customers = await this.customersService.getCustomers(page, size);
-    const result = new Result('', true, customers, null);
-    res.status(HttpStatus.PARTIAL_CONTENT).send(result);
-  }
 
   @Delete('/:customerId')
   @Profile([ProfileTypes.ADMIN, ProfileTypes.EDIT])
@@ -41,17 +49,10 @@ export class CustomersController {
     res.status(HttpStatus.NO_CONTENT).send();
   }
 
-  @Get('/:customerId')
-  async getCustomer(@Res() res: Response, @Param('customerId') customerId: string): Promise<any> {
-    const customer = await this.customersService.getCustomer(customerId);
-    const result = new Result('', true, customer, null);
-    res.status(HttpStatus.OK).send(result);
-  }
-
-  @Get('/:customerId/process')
-  async getCustomerProcess(@Res() res: Response, @Param('customerId') customerId: string): Promise<any> {
-    const process = await this.customersService.getCustomerProcess(customerId);
-    const result = new Result('', true, process, null);
+  @Get('?name=:name')
+  async getCustomersByName(@Res() res: Response, @Query('name') name: string): Promise<any> {
+    const customers = await this.customersService.getCustomersByName(name);
+    const result = new Result('', true, customers, null);
     res.status(HttpStatus.OK).send(result);
   }
 

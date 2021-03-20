@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Types } from "mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
+import { ProcessDTO } from "src/dtos/create-process.dto";
 import { ProcessDocument } from "../schemas/process.schema";
 
 @Injectable()
@@ -21,12 +21,23 @@ export class ProcessService {
           'customer'
         ]
       };
-      const ObjectId = (Types.ObjectId);
-      return await this.processModel.find({ customer: new ObjectId(customerId) }, options).exec();
+      return await this.processModel.find({ customer: customerId }, options).exec();
     } catch (error) {
       console.error("Ocorreu um erro ao processar sua requisição", error);
       throw error;
     }
+  }
+
+  async create(processDTO: ProcessDTO) {
+    let response;
+    try {
+      const createdProcess = await new this.processModel(processDTO);
+      response = await createdProcess.save()
+    } catch (exception) {
+      console.error("Ocorre um erro ao processua esta ação", exception);
+      throw exception;
+    }
+    return response;
   }
 
 }

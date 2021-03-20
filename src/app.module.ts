@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { jwtConstants } from './constants/constants';
 import { AuthController } from './controllers/auth.controller';
 import { CustomersController } from './controllers/customers.controller';
+import { ProcessController } from './controllers/process.controller';
 import { TokensController } from './controllers/token.controller';
 import { UsersController } from './controllers/users.controller';
 import { ProfileGuard } from './guards/profile.guard';
@@ -69,7 +70,7 @@ import { LocalStrategy } from './strategies/local.strategy';
       signOptions: { expiresIn: '60s' },
     }),
   ],
-  controllers: [UsersController, AuthController, TokensController, CustomersController],
+  controllers: [UsersController, AuthController, TokensController, CustomersController, ProcessController],
   providers: [AppService, UsersService, AuthService, MailClient, TokenService, LocalStrategy, JwtStrategy, CustomersService, ProcessService,
     {
       provide: APP_GUARD,

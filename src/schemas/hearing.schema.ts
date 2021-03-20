@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import * as mongoosePaginate from "mongoose-paginate-v2";
 
 export type HearingDocument = Hearing & Document;
@@ -13,10 +13,11 @@ export class Hearing {
   @Prop()
   date: Date;
 
-  // customer
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Customer' })
+  customer: Types.ObjectId;
 
-  // process
-
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Process' })
+  process: Types.ObjectId;
 
 }
 

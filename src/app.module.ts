@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { jwtConstants } from './constants/constants';
 import { AuthController } from './controllers/auth.controller';
 import { CustomersController } from './controllers/customers.controller';
+import { HearingController } from './controllers/hearings.controller';
 import { ProcessAreaController } from './controllers/process-area.controller';
 import { ProcessController } from './controllers/process.controller';
 import { TokensController } from './controllers/token.controller';
@@ -22,6 +23,7 @@ import { SeedSchema } from './schemas/seed.schema';
 import UserSchema from './schemas/user.schema';
 import { AuthService } from './services/auth.service';
 import { CustomersService } from './services/customers.service';
+import { HearingService } from './services/hearings.service';
 import { ProcessAreaService } from './services/process-area.service';
 import { ProcessService } from './services/process.service';
 import { MailClient } from './services/send-grid.service';
@@ -72,8 +74,27 @@ import { LocalStrategy } from './strategies/local.strategy';
       signOptions: { expiresIn: '60s' },
     }),
   ],
-  controllers: [UsersController, AuthController, TokensController, CustomersController, ProcessController, ProcessAreaController],
-  providers: [AppService, UsersService, AuthService, MailClient, TokenService, LocalStrategy, JwtStrategy, CustomersService, ProcessService, ProcessAreaService,
+  controllers: [
+    UsersController,
+    AuthController,
+    TokensController,
+    CustomersController,
+    ProcessController,
+    ProcessAreaController,
+    HearingController
+  ],
+  providers: [
+    AppService,
+    UsersService,
+    AuthService,
+    MailClient,
+    TokenService,
+    LocalStrategy,
+    JwtStrategy,
+    CustomersService,
+    ProcessService,
+    ProcessAreaService,
+    HearingService,
     {
       provide: APP_GUARD,
       useClass: ProfileGuard,

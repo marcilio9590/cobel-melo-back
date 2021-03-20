@@ -39,7 +39,9 @@ export class ProcessAreaController {
   async getAllProcessAreas(@Res() res: Response): Promise<any> {
     const processAreas = await this.processAreaService.getAllProcessAreas();
     const result = new Result('', true, processAreas, null);
-    res.status(HttpStatus.OK).send(result);
+    setTimeout(() => {
+      res.status(HttpStatus.OK).send(result);
+    }, 1000);
   }
 
   @Delete('/:id')

@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
+import { ProcessDocument } from "src/schemas/process.schema";
 import { CreateHearingDTO } from "../dtos/create-hearing.dto";
 import { HearingDocument } from "../schemas/hearing.schema";
 
@@ -8,14 +10,16 @@ import { HearingDocument } from "../schemas/hearing.schema";
 export class HearingService {
 
   constructor(
-    @InjectModel('Hearing') private readonly hearingModel: PaginateModel<HearingDocument>
+    @InjectModel('Hearing') private readonly hearingModel: PaginateModel<HearingDocument>,
+    @InjectModel('Process') private readonly processModel: Model<ProcessDocument>
   ) { }
 
   async create(createHearingDTO: CreateHearingDTO) {
     let response;
     try {
       const createdHearing = await new this.hearingModel(createHearingDTO);
-      response = await createdHearing.save()
+      response = await createdHearing.save();
+      await this.processModel.findByIdAndUpdate(createHearingDTO.process, { $push: { hearings: response._id } });
     } catch (exception) {
       console.error("Ocorre um erro ao processua esta ação", exception);
       throw exception;

@@ -13,15 +13,7 @@ export class ProcessService {
 
   async getProcessByCustomer(customerId: string) {
     try {
-      const options = {
-        select: [
-          '_id',
-          'number',
-          'description',
-          'customer'
-        ]
-      };
-      return await this.processModel.find({ customer: customerId }, options).exec();
+      return await this.processModel.find({ customer: customerId }).select('_id number description customer').exec();
     } catch (error) {
       console.error("Ocorreu um erro ao processar sua requisição", error);
       throw error;

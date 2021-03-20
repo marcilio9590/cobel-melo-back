@@ -32,10 +32,10 @@ export class Process {
   comments: string;
 
   @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'Movement' })
-  movements: [Types.ObjectId];
+  movements: Types.ObjectId[];
 
   @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'Hearing' })
-  hearings: [Types.ObjectId];
+  hearings: Types.ObjectId[];
 
   @Prop({ default: Date.now() })
   createdAt: Date;

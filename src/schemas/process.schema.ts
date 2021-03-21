@@ -34,7 +34,7 @@ export class Process {
   @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'Movement' })
   movements: Types.ObjectId[];
 
-  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'Hearing' })
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Hearing' }] })
   hearings: Types.ObjectId[];
 
   @Prop({ default: Date.now() })

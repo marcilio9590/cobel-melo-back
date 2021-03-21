@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
 import { ProcessDocument } from "src/schemas/process.schema";
 import { CreateHearingDTO } from "../dtos/create-hearing.dto";
@@ -52,15 +52,22 @@ export class HearingService {
   }
 
   async delete(id: string) {
-    await this.hearingModel.remove({ _id: id }, function (err) {
-      if (!err) {
-        return;
-      }
-      else {
-        console.error("Ocorreu um erro ao processar sua requisição", err);
-        throw err;
-      }
-    });
+    const ObjectId = (Types.ObjectId);
+    try {
+      const hearing = await this.hearingModel.findById(id).exec();
+      await this.hearingModel.deleteOne({ _id: id }, function (err) {
+        if (!err) {
+          return;
+        }
+        else {
+          throw err;
+        }
+      });
+      await this.processModel.updateOne({ _id: hearing.process }, { $pullAll: { hearings: [new ObjectId(id)] } })
+    } catch (error) {
+      console.error("Ocorreu um erro ao processar sua requisição", error);
+      throw error;
+    }
   }
 
 }

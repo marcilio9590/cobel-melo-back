@@ -18,14 +18,14 @@ export class UsersController {
   ) { }
 
   @Post()
-  @Profile([ProfileTypes.ADMIN])
+  @Profile([ProfileTypes.ADMIN, ProfileTypes.EDIT])
   async create(@Body() userDTO: UserDTO, @Res() res: Response): Promise<any> {
     await this.usersService.create(userDTO);
     res.status(HttpStatus.CREATED).send();
   }
 
   @Put('/:userId')
-  @Profile([ProfileTypes.ADMIN])
+  @Profile([ProfileTypes.ADMIN, ProfileTypes.EDIT])
   async update(@Param('userId') userId: string, @Body() userDTO: UserDTO, @Res() res: Response): Promise<any> {
     await this.usersService.update(userId, userDTO);
     res.status(HttpStatus.OK).send();

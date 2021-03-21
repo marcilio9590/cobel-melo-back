@@ -19,6 +19,9 @@ export class ProfileGuard implements CanActivate {
     }
 
     const token = context.switchToHttp().getRequest().headers['authorization'];
+    if (!token) {
+      return false;
+    }
     const decoded = this.authService.decode(token);
     return requiredProfiles.includes(decoded['payload']?.profileType);
   }

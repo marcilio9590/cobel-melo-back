@@ -5,7 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { AppService } from './app.service';
-import { jwtConstants } from './constants/constants';
+import { applicationConstants, jwtConstants } from './constants/constants';
 import { AuthController } from './controllers/auth.controller';
 import { CustomersController } from './controllers/customers.controller';
 import { HearingController } from './controllers/hearings.controller';
@@ -34,7 +34,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/cobel_melo', { useFindAndModify: false }),
+    MongooseModule.forRoot(applicationConstants.DB_URL, { useFindAndModify: false }),
     MongooseModule.forFeature([
       {
         name: 'User',

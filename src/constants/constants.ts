@@ -7,5 +7,6 @@ export const otpConstants = {
 }
 
 export const applicationConstants = {
-  sendGridKey: process.env.ENV_SEND_GRID_KEY
+  sendGridKey: process.env.ENV_SEND_GRID_KEY,
+  DB_URL: process.env.ENV_DB_URL
 }

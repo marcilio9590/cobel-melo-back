@@ -2,10 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
-import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { AppService } from './app.service';
-import { applicationConstants, jwtConstants } from './constants/constants';
+import { MongooseModule } from './config/mongoose.module';
+import { modelProviders } from './config/model.providers';
+import { jwtConstants } from './constants/constants';
 import { AuthController } from './controllers/auth.controller';
 import { CustomersController } from './controllers/customers.controller';
 import { HearingController } from './controllers/hearings.controller';
@@ -14,13 +15,6 @@ import { ProcessController } from './controllers/process.controller';
 import { TokensController } from './controllers/token.controller';
 import { UsersController } from './controllers/users.controller';
 import { ProfileGuard } from './guards/profile.guard';
-import CustomerSchema from './schemas/customer.schema';
-import HearingSchema from './schemas/hearing.schema';
-import MovementSchema from './schemas/movement.schema';
-import ProcessAreaSchema from './schemas/process-area.schema';
-import ProcessSchema from './schemas/process.schema';
-import { SeedSchema } from './schemas/seed.schema';
-import UserSchema from './schemas/user.schema';
 import { AuthService } from './services/auth.service';
 import { CustomersService } from './services/customers.service';
 import { HearingService } from './services/hearings.service';
@@ -34,40 +28,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(applicationConstants.DB_URL, {
-      useFindAndModify: false,
-      useNewUrlParser: true
-    }),
-    MongooseModule.forFeature([
-      {
-        name: 'User',
-        schema: UserSchema
-      },
-      {
-        name: 'Seed',
-        schema: SeedSchema
-      },
-      {
-        name: 'Customer',
-        schema: CustomerSchema
-      },
-      {
-        name: 'Process',
-        schema: ProcessSchema
-      },
-      {
-        name: 'ProcessArea',
-        schema: ProcessAreaSchema
-      },
-      {
-        name: 'Movement',
-        schema: MovementSchema
-      },
-      {
-        name: 'Hearing',
-        schema: HearingSchema
-      }
-    ]),
+    MongooseModule,
     ConfigModule.forRoot({
       expandVariables: true
     }),
@@ -98,6 +59,7 @@ import { LocalStrategy } from './strategies/local.strategy';
     ProcessService,
     ProcessAreaService,
     HearingService,
+    ...modelProviders,
     {
       provide: APP_GUARD,
       useClass: ProfileGuard,

@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { totp } from 'otplib';
 import { otpConstants } from '../constants/constants';
@@ -15,7 +14,7 @@ import { UsersService } from './users.service';
 export class TokenService {
 
   constructor(
-    @InjectModel('Seed') private readonly seedModel: Model<SeedDocument>,
+    @Inject('SEED_MODEL') private readonly seedModel: Model<SeedDocument>,
     private mailClient: MailClient,
     private configService: ConfigService,
     private userService: UsersService

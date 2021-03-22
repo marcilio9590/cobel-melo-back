@@ -1,5 +1,4 @@
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
+import { Inject, Injectable } from "@nestjs/common";
 import { Model } from "mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
 import { CustomerDTO } from "../dtos/customer.dto";
@@ -12,8 +11,8 @@ import { ProcessService } from "./process.service";
 export class CustomersService {
 
   constructor(
-    @InjectModel('Customer') private readonly customerPaginateModel: PaginateModel<CustomerDocument>,
-    @InjectModel('Customer') private readonly customerModel: Model<CustomerDocument>,
+    @Inject('CUSTOMER_MODEL') private readonly customerPaginateModel: PaginateModel<CustomerDocument>,
+    @Inject('CUSTOMER_MODEL') private readonly customerModel: Model<CustomerDocument>,
     private processService: ProcessService,
 
   ) { }

@@ -1,5 +1,4 @@
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
+import { Inject, Injectable } from "@nestjs/common";
 import { PaginateModel } from 'mongoose-paginate-v2';
 import { CreateProcessAreaDTO } from "../dtos/create-process-area.dto";
 import { UpdateProcessAreaDTO } from "../dtos/update-process-area.dto";
@@ -9,7 +8,7 @@ import { ProcessAreaDocument } from "../schemas/process-area.schema";
 export class ProcessAreaService {
 
   constructor(
-    @InjectModel('ProcessArea') private readonly processAreaModel: PaginateModel<ProcessAreaDocument>
+    @Inject('PROCESS_AREA_MODEL') private readonly processAreaModel: PaginateModel<ProcessAreaDocument>
   ) { }
 
   async create(createProcessAreaDTO: CreateProcessAreaDTO) {

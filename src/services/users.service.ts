@@ -1,8 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
+import { Inject, Injectable } from "@nestjs/common";
 import { PaginateModel } from 'mongoose-paginate-v2';
-import { UserDTO } from "../dtos/user.dto";
 import { ResetPasswordDTO } from "../dtos/reset-password.dto";
+import { UserDTO } from "../dtos/user.dto";
 import { UserStatus } from "../enums/user-status.enum";
 import { DuplicateUserException } from "../exceptions/duplica-user.exception";
 import { UserAlreadyPasswordException } from "../exceptions/user-already-has-password.exception";
@@ -13,7 +12,7 @@ import { UserDocument } from "../schemas/user.schema";
 export class UsersService {
 
   constructor(
-    @InjectModel('User') private readonly userModel: PaginateModel<UserDocument>
+    @Inject('USER_MODEL') private readonly userModel: PaginateModel<UserDocument>
   ) { }
 
   async create(createUserDTO: UserDTO): Promise<UserDocument> {

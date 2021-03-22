@@ -1,5 +1,4 @@
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
+import { Inject, Injectable } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
 import { ProcessDocument } from "src/schemas/process.schema";
@@ -10,8 +9,8 @@ import { HearingDocument } from "../schemas/hearing.schema";
 export class HearingService {
 
   constructor(
-    @InjectModel('Hearing') private readonly hearingModel: PaginateModel<HearingDocument>,
-    @InjectModel('Process') private readonly processModel: Model<ProcessDocument>
+    @Inject('HEARING_MODEL') private readonly hearingModel: PaginateModel<HearingDocument>,
+    @Inject('PROCESS_MODEL') private readonly processModel: Model<ProcessDocument>
   ) { }
 
   async create(createHearingDTO: CreateHearingDTO) {

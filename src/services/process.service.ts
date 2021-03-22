@@ -1,5 +1,4 @@
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
+import { Inject, Injectable } from "@nestjs/common";
 import { Model } from "mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
 import { ProcessDTO } from "../dtos/create-process.dto";
@@ -9,8 +8,8 @@ import { ProcessDocument } from "../schemas/process.schema";
 export class ProcessService {
 
   constructor(
-    @InjectModel('Process') private readonly processPaginateModel: PaginateModel<ProcessDocument>,
-    @InjectModel('Process') private readonly processModel: Model<ProcessDocument>
+    @Inject('PROCESS_MODEL') private readonly processPaginateModel: PaginateModel<ProcessDocument>,
+    @Inject('PROCESS_MODEL') private readonly processModel: Model<ProcessDocument>
   ) { }
 
   async getProcessByCustomer(customerId: string) {

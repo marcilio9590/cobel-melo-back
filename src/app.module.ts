@@ -34,7 +34,10 @@ import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(applicationConstants.DB_URL, { useFindAndModify: false }),
+    MongooseModule.forRoot(applicationConstants.DB_URL, {
+      useFindAndModify: false,
+      useNewUrlParser: true
+    }),
     MongooseModule.forFeature([
       {
         name: 'User',

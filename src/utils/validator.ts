@@ -35,7 +35,7 @@ export class Validator {
   }
 
   isPassword(value: string, message: string) {
-    const reg = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#%&])(?=.{8,})/);
+    const reg = new RegExp(/^[0-9]{6}$/);
     if (!reg.test(value))
       this.errors.push({ message: message });
   }

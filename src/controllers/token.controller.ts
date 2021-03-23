@@ -1,6 +1,5 @@
-import { Controller, Get, HttpStatus, Post, Query, Res } from "@nestjs/common";
+import { Controller, Get, Headers, HttpStatus, Post, Query, Res } from "@nestjs/common";
 import { Response } from 'express';
-import { Types } from "mongoose";
 import { Result } from "../dtos/result.dto";
 import { TokenService } from "../services/token.service";
 
@@ -17,9 +16,9 @@ export class TokensController {
     res.status(HttpStatus.OK).send();
   }
 
-  @Get('/validate')
-  async validateToken(@Query('token') token, @Query('customerId') userId: string) {
-    const result = await this.tokenService.validateToken(token, userId);
+  @Post('/validate')
+  async validateToken(@Headers() headers) {
+    const result = await this.tokenService.validateTokenByUsername(headers['otp-token'], headers['username']);
     return new Result(null, true, { isValid: result }, null);
   }
 

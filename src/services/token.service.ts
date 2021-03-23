@@ -2,6 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Model, Types } from 'mongoose';
 import { totp } from 'otplib';
+import { UserStatus } from '../enums/user-status.enum';
+import { UserAlreadyPasswordException } from '../exceptions/user-already-has-password.exception';
 import { otpConstants } from '../constants/constants';
 import { EmailDTO } from '../dtos/email.dto';
 import { SeedNotFoundException } from '../exceptions/seed-not-found.exception';
@@ -31,6 +33,11 @@ export class TokenService {
       if (!user) {
         throw new UserNotFoundException();
       }
+
+      if (user.status != UserStatus.INITIAL) {
+        throw new UserAlreadyPasswordException();
+      }
+
       let seed = await this.getSeedByUserId(user._id.toString());
       if (!seed) {
         const secret = otpConstants.secret.concat(user._id);
@@ -47,6 +54,18 @@ export class TokenService {
 
   async validateToken(token: string, userId: string): Promise<boolean> {
     let seed = await this.getSeedByUserId(userId);
+    if (!seed) {
+      throw new SeedNotFoundException();
+    }
+    return totp.check(token, seed.secret);
+  }
+
+  async validateTokenByUsername(token: string, username: string): Promise<boolean> {
+    const user = await this.userService.findByUsername(username);
+    if (!user) {
+      throw new UserNotFoundException();
+    }
+    let seed = await this.getSeedByUserId(user._id.toString());
     if (!seed) {
       throw new SeedNotFoundException();
     }

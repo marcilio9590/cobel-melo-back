@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
-import { ProcessDocument } from "src/schemas/process.schema";
+import { ProcessDocument } from "../schemas/process.schema";
 import { CreateHearingDTO } from "../dtos/create-hearing.dto";
 import { HearingDocument } from "../schemas/hearing.schema";
 

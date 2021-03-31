@@ -2,6 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { Model } from "mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
 import { CustomerDTO } from "../dtos/customer.dto";
+import { CustomerHasProcessesException } from "../exceptions/customer-has-processes.exception";
 import { DuplicateUserException } from "../exceptions/duplica-user.exception";
 import { CustomerDocument } from "../schemas/customer.schema";
 import { UserDocument } from "../schemas/user.schema";
@@ -55,7 +56,15 @@ export class CustomersService {
     }
   }
 
+  async verifyCustomerHasProcessesToBeDeleted(customerId: string) {
+    const result = await this.processService.getProcessByCustomer(customerId);
+    if (result && result.length > 0) {
+      throw new CustomerHasProcessesException();
+    }
+  }
+
   async deleteCustomer(customerId: string) {
+    await this.verifyCustomerHasProcessesToBeDeleted(customerId);
     await this.customerPaginateModel.remove({ _id: customerId }, function (err) {
       if (!err) {
         return;

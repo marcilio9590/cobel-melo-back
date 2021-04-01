@@ -25,6 +25,9 @@ export class Customer {
   @Prop({ default: Date.now() })
   createdAt: Date;
 
+  @Prop()
+  mothersName: string;
+
 }
 
 const CustomerSchema = SchemaFactory.createForClass(Customer).plugin(mongoosePaginate);

@@ -43,7 +43,8 @@ export class CustomersService {
         'email',
         'cpf',
         'phones',
-        'address'
+        'address',
+        'mothersName'
       ],
       page: page,
       limit: size,

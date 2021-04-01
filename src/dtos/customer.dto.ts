@@ -6,6 +6,7 @@ export class CustomerDTO {
     public email: string,
     public cpf: string,
     public phones: string[],
-    public address: string
+    public address: string,
+    public mothersName: string
   ) { }
 }

@@ -5,7 +5,6 @@ import { CustomerDTO } from "../dtos/customer.dto";
 import { CustomerHasProcessesException } from "../exceptions/customer-has-processes.exception";
 import { DuplicateUserException } from "../exceptions/duplica-user.exception";
 import { CustomerDocument } from "../schemas/customer.schema";
-import { UserDocument } from "../schemas/user.schema";
 import { ProcessService } from "./process.service";
 
 @Injectable()
@@ -18,19 +17,14 @@ export class CustomersService {
 
   ) { }
 
-  async create(customerDTO: CustomerDTO): Promise<UserDocument> {
-    const createdUser = await new this.customerPaginateModel(customerDTO);
+  async create(customerDTO: CustomerDTO): Promise<CustomerDocument> {
+    const createdCustomer = await new this.customerPaginateModel(customerDTO);
     let response;
     try {
-      response = await createdUser.save()
+      response = await createdCustomer.save()
     } catch (exception) {
       console.error("Ocorre um erro ao processua esta ação", exception);
-      switch (exception.code) {
-        case 11000:
-          throw new DuplicateUserException();
-        default:
-          throw exception;
-      }
+      throw exception;
     }
     return response;
   }

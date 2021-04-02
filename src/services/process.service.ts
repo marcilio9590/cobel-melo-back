@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Model } from "mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
+import { ProcessFilterTypes } from "../constants/process-filter-types.enum";
 import { ProcessDTO } from "../dtos/create-process.dto";
 import { ProcessDocument } from "../schemas/process.schema";
 
@@ -34,7 +35,7 @@ export class ProcessService {
     let response;
     try {
       const createdProcess = await new this.processPaginateModel(createProcessDTO);
-      response = await createdProcess.save()
+      response = await createdProcess.save();
     } catch (exception) {
       console.error("Ocorre um erro ao processua esta ação", exception);
       throw exception;
@@ -68,7 +69,7 @@ export class ProcessService {
     }
   }
 
-  async paginate(page, size) {
+  async paginate(page, size, filterType: string, filterValue: string) {
     const options = {
       populate: 'customer',
       select: [
@@ -81,8 +82,14 @@ export class ProcessService {
       page: page,
       limit: size,
     };
+    var filter = {
+      [ProcessFilterTypes[filterType]]: filterValue
+    }
+    if (ProcessFilterTypes.DESCRIPTION.toUpperCase() === filterType) {
+      filter['description'] = new RegExp(filterValue, 'i');
+    }
     try {
-      return await this.processPaginateModel.paginate({}, options);
+      return await this.processPaginateModel.paginate(filter, options);
     } catch (error) {
       console.error(error);
       throw error;

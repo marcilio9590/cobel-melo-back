@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Res } from "@nestjs/common";
 import { Response } from 'express';
+import { ProcessFilterTypes } from "../constants/process-filter-types.enum";
 import { Profile } from "../decorators/profiles.decorator";
 import { ProcessDTO } from "../dtos/create-process.dto";
 import { Result } from "../dtos/result.dto";
@@ -14,8 +15,9 @@ export class ProcessController {
   ) { }
 
   @Get()
-  async paginate(@Res() res: Response, @Query('page') page: Number, @Query('size') size: Number): Promise<any> {
-    const customers = await this.processService.paginate(page, size);
+  async paginate(@Res() res: Response, @Query('page') page: Number, @Query('size') size: Number,
+    @Query('filterType') filterType: ProcessFilterTypes, @Query('filterValue') filterValue: string): Promise<any> {
+    const customers = await this.processService.paginate(page, size, filterType, filterValue);
     const result = new Result('', true, customers, null);
     res.status(HttpStatus.PARTIAL_CONTENT).send(result);
   }

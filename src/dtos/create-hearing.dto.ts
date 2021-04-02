@@ -4,7 +4,8 @@ export class CreateHearingDTO {
     public local: string,
     public date: Date,
     public customer: string,
-    public process: string
+    public process: string,
+    public link: string
   ) { }
 
 }

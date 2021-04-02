@@ -19,6 +19,9 @@ export class Hearing {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Process' })
   process: Types.ObjectId;
 
+  @Prop()
+  link: string;
+
 }
 
 const HearingSchema = SchemaFactory.createForClass(Hearing).plugin(mongoosePaginate);

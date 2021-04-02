@@ -10,7 +10,7 @@ export class Customer {
   @Prop()
   name: string;
 
-  @Prop({ unique: true, sparse: true })
+  @Prop({ sparse: true })
   email: string;
 
   @Prop()

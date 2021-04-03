@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Res, UseGuards } from "@nestjs/common";
 import { Response } from 'express';
 import { ProcessFilterTypes } from "../constants/process-filter-types.enum";
 import { Profile } from "../decorators/profiles.decorator";
 import { ProcessDTO } from "../dtos/create-process.dto";
 import { Result } from "../dtos/result.dto";
 import { ProfileTypes } from "../enums/profiles.enum";
+import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { ProcessService } from "../services/process.service";
 
 @Controller('/v1/process')
@@ -15,6 +16,7 @@ export class ProcessController {
   ) { }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async paginate(@Res() res: Response, @Query('page') page: Number, @Query('size') size: Number,
     @Query('filterType') filterType: ProcessFilterTypes, @Query('filterValue') filterValue: string): Promise<any> {
     const customers = await this.processService.paginate(page, size, filterType, filterValue);
@@ -23,6 +25,7 @@ export class ProcessController {
   }
 
   @Patch('/:id')
+  @UseGuards(JwtAuthGuard)
   @Profile([ProfileTypes.EDIT, ProfileTypes.ADMIN])
   async update(@Param('id') id: string, @Body() processDTO: ProcessDTO, @Res() res: Response): Promise<any> {
     await this.processService.update(id, processDTO);
@@ -30,6 +33,7 @@ export class ProcessController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @Profile([ProfileTypes.EDIT, ProfileTypes.ADMIN])
   async create(@Body() createProcessDTO: ProcessDTO, @Res() res: Response): Promise<any> {
     await this.processService.create(createProcessDTO);
@@ -37,6 +41,7 @@ export class ProcessController {
   }
 
   @Get('/:id')
+  @UseGuards(JwtAuthGuard)
   async getProcessDetail(@Res() res: Response, @Param('id') id: string): Promise<any> {
     const customer = await this.processService.getProcessDetail(id);
     const result = new Result('', true, customer, null);
@@ -44,6 +49,7 @@ export class ProcessController {
   }
 
   @Delete('/:id')
+  @UseGuards(JwtAuthGuard)
   @Profile([ProfileTypes.ADMIN, ProfileTypes.EDIT])
   async delete(@Res() res: Response, @Param('id') id: string): Promise<any> {
     await this.processService.delete(id);
@@ -51,6 +57,7 @@ export class ProcessController {
   }
 
   @Delete('/:id/movements/:movementId')
+  @UseGuards(JwtAuthGuard)
   @Profile([ProfileTypes.ADMIN, ProfileTypes.EDIT])
   async deleteMovement(@Res() res: Response, @Param('id') id: string, @Param('movementId') movementId: string): Promise<any> {
     await this.processService.deleteMovement(id, movementId);

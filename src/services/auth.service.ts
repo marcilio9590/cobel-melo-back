@@ -18,7 +18,7 @@ export class AuthService {
     };
 
     try {
-      return { access_token: await this.jwtService.sign(payload) };
+      return { access_token: await this.jwtService.sign(payload), ...payload };
     } catch (error) {
       console.error("Ocorreu um erro ao processar sua requisição", error);
       throw error;

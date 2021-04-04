@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query, Res, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query, Res, UseGuards, UseInterceptors } from "@nestjs/common";
 import { Response } from 'express';
+import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { ResetPasswordContract } from "../contracts/users/reset-password.contract";
 import { Profile } from "../decorators/profiles.decorator";
 import { ResetPasswordDTO } from "../dtos/reset-password.dto";
@@ -18,6 +19,7 @@ export class UsersController {
   ) { }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @Profile([ProfileTypes.ADMIN, ProfileTypes.EDIT])
   async create(@Body() userDTO: UserDTO, @Res() res: Response): Promise<any> {
     await this.usersService.create(userDTO);
@@ -25,6 +27,7 @@ export class UsersController {
   }
 
   @Put('/:userId')
+  @UseGuards(JwtAuthGuard)
   @Profile([ProfileTypes.ADMIN, ProfileTypes.EDIT])
   async update(@Param('userId') userId: string, @Body() userDTO: UserDTO, @Res() res: Response): Promise<any> {
     await this.usersService.update(userId, userDTO);
@@ -39,6 +42,7 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async getUsers(@Res() res: Response, @Query('page') page: Number, @Query('size') size: Number): Promise<any> {
     const users = await this.usersService.getUsers(page, size);
     const result = new Result('', true, users, null);
@@ -46,6 +50,7 @@ export class UsersController {
   }
 
   @Delete('/:userId')
+  @UseGuards(JwtAuthGuard)
   @Profile([ProfileTypes.ADMIN, ProfileTypes.EDIT])
   async deleteUser(@Res() res: Response, @Param('userId') userId: string): Promise<any> {
     await this.usersService.deleteUser(userId);

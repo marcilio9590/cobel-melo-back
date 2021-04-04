@@ -4,8 +4,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AppService } from './app.service';
-import { MongooseModule } from './config/mongoose.module';
 import { modelProviders } from './config/model.providers';
+import { MongooseModule } from './config/mongoose.module';
 import { jwtConstants } from './constants/constants';
 import { AuthController } from './controllers/auth.controller';
 import { CustomersController } from './controllers/customers.controller';
@@ -32,10 +32,10 @@ import { LocalStrategy } from './strategies/local.strategy';
     ConfigModule.forRoot({
       expandVariables: true
     }),
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: 3600 },
     }),
   ],
   controllers: [
@@ -64,7 +64,6 @@ import { LocalStrategy } from './strategies/local.strategy';
       provide: APP_GUARD,
       useClass: ProfileGuard,
     }
-  ],
-  exports: [JwtModule]
+  ]
 })
 export class AppModule { }

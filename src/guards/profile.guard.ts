@@ -22,7 +22,7 @@ export class ProfileGuard implements CanActivate {
     if (!token) {
       return false;
     }
-    const decoded = this.authService.decode(token);
-    return requiredProfiles.includes(decoded['payload']?.profileType);
+    const decoded = this.authService.decode(token ? token.split('Bearer ')[1] : '');
+    return requiredProfiles.includes(decoded['profileType']);
   }
 }

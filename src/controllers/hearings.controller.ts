@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query, Res, UseGuards } from "@nestjs/common";
 import { Response } from 'express';
-import { CreateHearingDTO } from "../dtos/create-hearing.dto";
 import { Profile } from "../decorators/profiles.decorator";
+import { CreateHearingDTO } from "../dtos/create-hearing.dto";
 import { Result } from "../dtos/result.dto";
 import { ProfileTypes } from "../enums/profiles.enum";
+import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { HearingService } from "../services/hearings.service";
 
 @Controller('/v1/hearings')
@@ -14,6 +15,7 @@ export class HearingController {
   ) { }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @Profile([ProfileTypes.EDIT, ProfileTypes.ADMIN])
   async create(@Body() createProcessAreaDTO: CreateHearingDTO, @Res() res: Response): Promise<any> {
     await this.hearingService.create(createProcessAreaDTO);
@@ -21,6 +23,7 @@ export class HearingController {
   }
 
   @Put('/:id')
+  @UseGuards(JwtAuthGuard)
   @Profile([ProfileTypes.EDIT, ProfileTypes.ADMIN])
   async update(@Body() hearingDTO: CreateHearingDTO, @Param('id') id: string, @Res() res: Response): Promise<any> {
     await this.hearingService.update(id, hearingDTO);
@@ -28,6 +31,7 @@ export class HearingController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async paginate(@Res() res: Response, @Query('page') page: Number, @Query('size') size: Number): Promise<any> {
     const processAreas = await this.hearingService.paginate(page, size);
     const result = new Result('', true, processAreas, null);
@@ -35,6 +39,7 @@ export class HearingController {
   }
 
   @Delete('/:id')
+  @UseGuards(JwtAuthGuard)
   @Profile([ProfileTypes.ADMIN, ProfileTypes.EDIT])
   async deleteCustomer(@Res() res: Response, @Param('id') id: string): Promise<any> {
     await this.hearingService.delete(id);

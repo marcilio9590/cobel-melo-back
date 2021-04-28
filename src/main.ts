@@ -5,7 +5,7 @@ import { GenericExceptionFilter } from './exceptions/generic-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: ['http://localhost:8080', 'https://cobel-melo.herokuapp.com'],
+      origin: ['http://localhost:8080', 'https://cobel-melo.herokuapp.com', 'https://cobel-melo.herokuapp.com'],
       credentials: true,
     }
   });

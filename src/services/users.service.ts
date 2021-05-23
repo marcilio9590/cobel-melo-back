@@ -116,4 +116,14 @@ export class UsersService {
     }
   }
 
+  async updateLastLogin(user: UserDocument) {
+    try {
+      user.lastLogin = new Date();
+      await this.userModel.findByIdAndUpdate(user.id, user);
+    } catch (error) {
+      console.error("Ocorreu um erro ao processar sua requisição", error);
+      throw error;
+    }
+  }
+
 }

@@ -28,6 +28,9 @@ export class User {
   @Prop({ default: Date.now() })
   createdAt: Date;
 
+  @Prop()
+  lastLogin: Date;
+
 }
 
 const UserSchema = SchemaFactory.createForClass(User).plugin(mongoosePaginate);

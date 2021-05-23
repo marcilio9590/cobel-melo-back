@@ -22,6 +22,7 @@ export class AuthController {
       throw new HttpException('Usuário com senha não cadastrada', HttpStatus.BAD_REQUEST);
     }
 
+    await this.usersService.updateLastLogin(user);
     const token = await this.authService.createToken(user);
     return token;
   }

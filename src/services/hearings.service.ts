@@ -1,9 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
-import { ProcessDocument } from "../schemas/process.schema";
 import { CreateHearingDTO } from "../dtos/create-hearing.dto";
 import { HearingDocument } from "../schemas/hearing.schema";
+import { ProcessDocument } from "../schemas/process.schema";
 
 @Injectable()
 export class HearingService {
@@ -26,14 +26,18 @@ export class HearingService {
     return response;
   }
 
-  async paginate(page, size) {
-    const options = {
+  async paginate(page, size, sort, removePast) {
+    let filter = {}
+    let options = {
       populate: 'customer process',
       page: page,
       limit: size,
     };
+    if (sort) { options['sort'] = sort };
+    if (removePast) { filter['date'] = { $gte: Date.now() } }
+
     try {
-      return await this.hearingModel.paginate({}, options);
+      return await this.hearingModel.paginate(filter, options);
     } catch (error) {
       console.error("Ocorre um erro ao processua esta ação", error);
       throw error;

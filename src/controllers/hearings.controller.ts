@@ -32,8 +32,9 @@ export class HearingController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async paginate(@Res() res: Response, @Query('page') page: Number, @Query('size') size: Number): Promise<any> {
-    const processAreas = await this.hearingService.paginate(page, size);
+  async paginate(@Res() res: Response, @Query() query): Promise<any> {
+    const sort = query['sort'] ? JSON.parse(query['sort']) : null;
+    const processAreas = await this.hearingService.paginate(query['page'], query['size'], sort, query['removePast']);
     const result = new Result('', true, processAreas, null);
     res.status(HttpStatus.PARTIAL_CONTENT).send(result);
   }

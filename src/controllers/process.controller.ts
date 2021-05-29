@@ -18,8 +18,9 @@ export class ProcessController {
   @Get()
   @UseGuards(JwtAuthGuard)
   async paginate(@Res() res: Response, @Query('page') page: Number, @Query('size') size: Number,
-    @Query('filterType') filterType: ProcessFilterTypes, @Query('filterValue') filterValue: string): Promise<any> {
-    const customers = await this.processService.paginate(page, size, filterType, filterValue);
+    @Query('filterType') filterType: ProcessFilterTypes, @Query('filterValue') filterValue: string,
+    @Query('isClosedProcesses') isClosedProcesses: boolean): Promise<any> {
+    const customers = await this.processService.paginate(page, size, filterType, filterValue, isClosedProcesses);
     const result = new Result('', true, customers, null);
     res.status(HttpStatus.PARTIAL_CONTENT).send(result);
   }

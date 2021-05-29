@@ -12,7 +12,8 @@ export class ProcessDTO {
     public comments: string,
     public movements: string[],
     public hearings: string[],
-    public createdAt: Date
+    public createdAt: Date,
+    public closed: boolean
   ) { }
 
 

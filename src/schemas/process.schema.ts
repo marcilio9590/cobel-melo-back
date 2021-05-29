@@ -40,6 +40,9 @@ export class Process {
   @Prop({ default: Date.now() })
   createdAt: Date;
 
+  @Prop({ default: false })
+  closed: boolean;
+
 }
 
 const ProcessSchema = SchemaFactory.createForClass(Process).plugin(mongoosePaginate);

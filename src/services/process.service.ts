@@ -69,7 +69,7 @@ export class ProcessService {
     }
   }
 
-  async paginate(page, size, filterType: string, filterValue: string) {
+  async paginate(page, size, filterType: string, filterValue: string, isClosedProcesses: boolean) {
     const options = {
       populate: 'customer',
       select: [
@@ -83,7 +83,8 @@ export class ProcessService {
       limit: size,
     };
     var filter = {
-      [ProcessFilterTypes[filterType]]: filterValue
+      [ProcessFilterTypes[filterType]]: filterValue,
+      'closed': isClosedProcesses
     }
     if (ProcessFilterTypes.DESCRIPTION.toUpperCase() === filterType) {
       filter['description'] = new RegExp(filterValue, 'i');
@@ -93,7 +94,6 @@ export class ProcessService {
     } catch (error) {
       console.error(error);
       throw error;
-
     }
   }
 

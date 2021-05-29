@@ -42,6 +42,7 @@ export class CustomersService {
       ],
       page: page,
       limit: size,
+      sort: { 'name': 1 }
     };
     try {
       return await this.customerPaginateModel.paginate({}, options);

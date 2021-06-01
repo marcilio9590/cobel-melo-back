@@ -42,9 +42,11 @@ export class ProcessService {
       const createdProcess = await new this.processPaginateModel(createProcessDTO);
       processSaved = await createdProcess.save();
 
-      const installmentsSaved = await this.installmentsService.createInstallments(processSaved, installmentsToSave);
+      if (installmentsToSave && installmentsToSave.length > 0) {
+        const installmentsSaved = await this.installmentsService.createInstallments(processSaved, installmentsToSave);
+        await this.processModel.findByIdAndUpdate(processSaved.id, { $push: { installments: { $each: installmentsSaved?.ops } } });
+      }
 
-      await this.processModel.findByIdAndUpdate(processSaved.id, { $push: { installments: { $each: installmentsSaved?.ops } } });
     } catch (exception) {
       console.error("Ocorre um erro ao processar esta ação", exception);
       throw exception;

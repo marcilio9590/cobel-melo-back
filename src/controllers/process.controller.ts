@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Res, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { Response } from 'express';
 import { ProcessFilterTypes } from "../constants/process-filter-types.enum";
 import { Profile } from "../decorators/profiles.decorator";
@@ -35,6 +35,7 @@ export class ProcessController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @Profile([ProfileTypes.EDIT, ProfileTypes.ADMIN])
   async create(@Body() createProcessDTO: ProcessDTO, @Res() res: Response): Promise<any> {
     await this.processService.create(createProcessDTO);

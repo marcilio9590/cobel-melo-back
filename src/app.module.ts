@@ -18,6 +18,7 @@ import { ProfileGuard } from './guards/profile.guard';
 import { AuthService } from './services/auth.service';
 import { CustomersService } from './services/customers.service';
 import { HearingService } from './services/hearings.service';
+import { InstallmentsService } from './services/installments.service';
 import { ProcessAreaService } from './services/process-area.service';
 import { ProcessService } from './services/process.service';
 import { MailClient } from './services/send-grid.service';
@@ -59,6 +60,7 @@ import { LocalStrategy } from './strategies/local.strategy';
     ProcessService,
     ProcessAreaService,
     HearingService,
+    InstallmentsService,
     ...modelProviders,
     {
       provide: APP_GUARD,

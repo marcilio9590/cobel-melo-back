@@ -43,7 +43,7 @@ export class ProcessService {
       processSaved = await createdProcess.save();
 
       if (installmentsToSave && installmentsToSave.length > 0) {
-        const installmentsSaved = await this.installmentsService.createInstallments(processSaved, installmentsToSave);
+        const installmentsSaved = await this.installmentsService.createInstallments(processSaved.id, installmentsToSave);
         await this.processModel.findByIdAndUpdate(processSaved.id, { $push: { installments: { $each: installmentsSaved?.ops } } });
       }
 
@@ -73,7 +73,19 @@ export class ProcessService {
 
   async update(id: string, processDTO: ProcessDTO) {
     try {
+
+      const installmentsToSave = [...processDTO.installments];
+      processDTO.installments = [];
+
       await this.processPaginateModel.findByIdAndUpdate(id, processDTO);
+
+      await this.installmentsService.removeInstallmentsByProcess(id);
+
+      if (installmentsToSave && installmentsToSave.length > 0) {
+        const installmentsSaved = await this.installmentsService.createInstallments(id, installmentsToSave);
+        await this.processModel.findByIdAndUpdate(id, { $push: { installments: { $each: installmentsSaved?.ops } } });
+      }
+
     } catch (error) {
       console.error("Ocorreu um erro ao processar sua requisição", error);
       throw error;

@@ -2,7 +2,6 @@ import { Inject, Injectable } from "@nestjs/common";
 import { Model } from "mongoose";
 import { InstallmentDocument } from "src/schemas/installment.schema";
 import { InstallmentsDTO } from "../dtos/installments.dto";
-import { ProcessDocument } from "../schemas/process.schema";
 
 @Injectable()
 export class InstallmentsService {
@@ -11,12 +10,26 @@ export class InstallmentsService {
     @Inject('INSTALLMENT_MODEL') private readonly installmentModel: Model<InstallmentDocument>
   ) { }
 
-  async createInstallments(createdProcess: ProcessDocument, installments: InstallmentsDTO[]) {
+  async createInstallments(processId: string, installments: InstallmentsDTO[]) {
     installments.forEach((i) => {
-      i.process = createdProcess.id;
+      i.process = processId;
     });
     const saved = await this.installmentModel.collection.insertMany(installments);
     return saved;
   }
+
+  async removeInstallmentsByProcess(processId) {
+    await this.installmentModel.remove({ "process": processId }, function (err) {
+      if (!err) {
+        return;
+      }
+      else {
+        console.error("Ocorreu um erro ao processar sua requisição", err);
+        throw err;
+      }
+    });
+  }
+
+
 
 }

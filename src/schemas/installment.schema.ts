@@ -11,7 +11,7 @@ export class Installment {
   process: Types.ObjectId;
 
   @Prop()
-  date: Date;
+  date: string;
 
   @Prop()
   value: Number;

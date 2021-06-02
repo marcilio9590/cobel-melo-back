@@ -45,8 +45,8 @@ export class ProcessController {
   @Get('/:id')
   @UseGuards(JwtAuthGuard)
   async getProcessDetail(@Res() res: Response, @Param('id') id: string): Promise<any> {
-    const customer = await this.processService.getProcessDetail(id);
-    const result = new Result('', true, customer, null);
+    const process = await this.processService.getProcessDetail(id);
+    const result = new Result('', true, process, null);
     res.status(HttpStatus.OK).send(result);
   }
 

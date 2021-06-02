@@ -5,7 +5,7 @@ export class InstallmentsDTO {
   process: String;
 
   @Allow()
-  date: Date;
+  date: string;
 
   @Allow()
   value: Number;

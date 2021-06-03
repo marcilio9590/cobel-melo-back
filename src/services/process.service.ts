@@ -4,13 +4,15 @@ import { PaginateModel } from 'mongoose-paginate-v2';
 import { ProcessFilterTypes } from "../constants/process-filter-types.enum";
 import { ProcessDTO } from "../dtos/create-process.dto";
 import { ProcessDocument } from "../schemas/process.schema";
+import { InstallmentsService } from "./installments.service";
 
 @Injectable()
 export class ProcessService {
 
   constructor(
     @Inject('PROCESS_MODEL') private readonly processPaginateModel: PaginateModel<ProcessDocument>,
-    @Inject('PROCESS_MODEL') private readonly processModel: Model<ProcessDocument>
+    @Inject('PROCESS_MODEL') private readonly processModel: Model<ProcessDocument>,
+    private installmentsService: InstallmentsService
   ) { }
 
   async getProcessByCustomer(customerId: string) {
@@ -24,7 +26,7 @@ export class ProcessService {
 
   async getProcessDetail(processId: string) {
     try {
-      return await this.processModel.findById(processId).populate('customer processArea hearings').exec();
+      return await this.processModel.findById(processId).populate('customer processArea hearings installments').exec();
     } catch (error) {
       console.error("Ocorreu um erro ao processar sua requisição", error);
       throw error;
@@ -32,15 +34,24 @@ export class ProcessService {
   }
 
   async create(createProcessDTO: ProcessDTO) {
-    let response;
+    let processSaved;
     try {
+      const installmentsToSave = [...createProcessDTO.installments];
+      createProcessDTO.installments = [];
+
       const createdProcess = await new this.processPaginateModel(createProcessDTO);
-      response = await createdProcess.save();
+      processSaved = await createdProcess.save();
+
+      if (installmentsToSave && installmentsToSave.length > 0) {
+        const installmentsSaved = await this.installmentsService.createInstallments(processSaved.id, installmentsToSave);
+        await this.processModel.findByIdAndUpdate(processSaved.id, { $push: { installments: { $each: installmentsSaved?.ops } } });
+      }
+
     } catch (exception) {
-      console.error("Ocorre um erro ao processua esta ação", exception);
+      console.error("Ocorre um erro ao processar esta ação", exception);
       throw exception;
     }
-    return response;
+    return processSaved;
   }
 
   async deleteMovement(id: string, movementId: string) {
@@ -62,7 +73,19 @@ export class ProcessService {
 
   async update(id: string, processDTO: ProcessDTO) {
     try {
+
+      const installmentsToSave = [...processDTO.installments];
+      processDTO.installments = [];
+
       await this.processPaginateModel.findByIdAndUpdate(id, processDTO);
+
+      await this.installmentsService.removeInstallmentsByProcess(id);
+
+      if (installmentsToSave && installmentsToSave.length > 0) {
+        const installmentsSaved = await this.installmentsService.createInstallments(id, installmentsToSave);
+        await this.processModel.findByIdAndUpdate(id, { $push: { installments: { $each: installmentsSaved?.ops } } });
+      }
+
     } catch (error) {
       console.error("Ocorreu um erro ao processar sua requisição", error);
       throw error;

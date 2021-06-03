@@ -43,6 +43,15 @@ export class Process {
   @Prop({ default: false })
   closed: boolean;
 
+  @Prop()
+  entraceValue: Number;
+
+  @Prop()
+  numberOfInstallments: Number;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Installment' }] })
+  installments: Types.ObjectId[];
+
 }
 
 const ProcessSchema = SchemaFactory.createForClass(Process).plugin(mongoosePaginate);

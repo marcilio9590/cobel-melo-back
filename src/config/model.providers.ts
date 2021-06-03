@@ -1,6 +1,7 @@
 import { Connection } from 'mongoose';
 import CustomerSchema from '../schemas/customer.schema';
 import HearingSchema from '../schemas/hearing.schema';
+import InstallmentSchema from '../schemas/installment.schema';
 import MovementSchema from '../schemas/movement.schema';
 import ProcessAreaSchema from '../schemas/process-area.schema';
 import ProcessSchema from '../schemas/process.schema';
@@ -41,6 +42,11 @@ export const modelProviders = [
   {
     provide: 'HEARING_MODEL',
     useFactory: (connection: Connection) => connection.model('Hearing', HearingSchema),
+    inject: ['DATABASE_CONNECTION'],
+  },
+  {
+    provide: 'INSTALLMENT_MODEL',
+    useFactory: (connection: Connection) => connection.model('Installment', InstallmentSchema),
     inject: ['DATABASE_CONNECTION'],
   }
 ];

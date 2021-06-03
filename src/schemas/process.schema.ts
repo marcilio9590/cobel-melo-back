@@ -40,6 +40,9 @@ export class Process {
   @Prop({ default: Date.now() })
   createdAt: Date;
 
+  @Prop({ default: Date.now() })
+  contractDate: Date;
+
   @Prop({ default: false })
   closed: boolean;
 

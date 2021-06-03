@@ -38,6 +38,9 @@ export class ProcessDTO {
   createdAt: Date;
 
   @Allow()
+  contractDate: Date;
+
+  @Allow()
   closed: boolean;
 
   @Allow()

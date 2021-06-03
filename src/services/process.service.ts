@@ -120,4 +120,19 @@ export class ProcessService {
     }
   }
 
+  async getCountProcessesByRangeDate(start: Date, finish: Date) {
+    try {
+      const result = await this.processModel.count({
+        contractDate: {
+          $gte: start,
+          $lt: finish
+        }
+      }).exec();
+      return result;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
 }

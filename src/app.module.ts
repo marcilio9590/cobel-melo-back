@@ -9,6 +9,7 @@ import { MongooseModule } from './config/mongoose.module';
 import { jwtConstants } from './constants/constants';
 import { AuthController } from './controllers/auth.controller';
 import { CustomersController } from './controllers/customers.controller';
+import { DashboardsController } from './controllers/dashboards.controller';
 import { HearingController } from './controllers/hearings.controller';
 import { ProcessAreaController } from './controllers/process-area.controller';
 import { ProcessController } from './controllers/process.controller';
@@ -17,6 +18,7 @@ import { UsersController } from './controllers/users.controller';
 import { ProfileGuard } from './guards/profile.guard';
 import { AuthService } from './services/auth.service';
 import { CustomersService } from './services/customers.service';
+import { DashboardsService } from './services/dashboards.service';
 import { HearingService } from './services/hearings.service';
 import { InstallmentsService } from './services/installments.service';
 import { ProcessAreaService } from './services/process-area.service';
@@ -46,7 +48,8 @@ import { LocalStrategy } from './strategies/local.strategy';
     CustomersController,
     ProcessController,
     ProcessAreaController,
-    HearingController
+    HearingController,
+    DashboardsController
   ],
   providers: [
     AppService,
@@ -61,6 +64,7 @@ import { LocalStrategy } from './strategies/local.strategy';
     ProcessAreaService,
     HearingService,
     InstallmentsService,
+    DashboardsService,
     ...modelProviders,
     {
       provide: APP_GUARD,

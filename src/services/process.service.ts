@@ -139,7 +139,7 @@ export class ProcessService {
     try {
       const result = await this.processModel.aggregate([
         { "$project": { "year": { "$year": "$createdAt" }, } },
-        { "$group": { "_id": null, "years": { "$addToSet": { "year": "$year" } } } }
+        { "$group": { "_id": null, "years": { "$addToSet": { "description": "$year", "id": "$year" } } } }
       ]).exec();
       return result[0]?.years;
     } catch (error) {

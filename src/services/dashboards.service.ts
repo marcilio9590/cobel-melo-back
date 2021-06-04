@@ -18,4 +18,9 @@ export class DashboardsService {
     return result;
   }
 
+  async getAvailableYears() {
+    const result = await this.processService.getAvailableYears();
+    return result;
+  }
+
 }

@@ -17,4 +17,11 @@ export class DashboardsController {
     res.status(HttpStatus.OK).send({ count: result });
   }
 
+  @Get('/processes/years')
+  @UsePipes(new ValidationPipe())
+  async getAvailableYears(@Res() res: Response) {
+    const result = await this.dashboardsService.getAvailableYears();
+    res.status(HttpStatus.OK).send(result);
+  }
+
 }

@@ -135,4 +135,17 @@ export class ProcessService {
     }
   }
 
+  async getAvailableYears() {
+    try {
+      const result = await this.processModel.aggregate([
+        { "$project": { "year": { "$year": "$createdAt" }, } },
+        { "$group": { "_id": null, "years": { "$addToSet": { "year": "$year" } } } }
+      ]).exec();
+      return result[0]?.years;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
 }

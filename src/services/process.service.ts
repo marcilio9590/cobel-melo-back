@@ -77,12 +77,12 @@ export class ProcessService {
       const installmentsToSave = [...processDTO.installments];
       processDTO.installments = [];
 
-      await this.processPaginateModel.findByIdAndUpdate(id, processDTO);
+      const process = await this.processPaginateModel.findByIdAndUpdate(id, processDTO);
 
       await this.installmentsService.removeInstallmentsByProcess(id);
 
       if (installmentsToSave && installmentsToSave.length > 0) {
-        const installmentsSaved = await this.installmentsService.createInstallments(id, installmentsToSave);
+        const installmentsSaved = await this.installmentsService.createInstallments(process._id, installmentsToSave);
         await this.processModel.findByIdAndUpdate(id, { $push: { installments: { $each: installmentsSaved?.ops } } });
       }
 
@@ -138,10 +138,28 @@ export class ProcessService {
   async getAvailableYears() {
     try {
       const result = await this.processModel.aggregate([
-        { "$project": { "year": { "$year": "$createdAt" }, } },
+        { "$project": { "year": { "$year": "$contractDate" } } },
         { "$group": { "_id": null, "years": { "$addToSet": { "description": "$year", "id": "$year" } } } }
       ]).exec();
-      return result[0]?.years;
+      return result[0]?.years?.filter(y => y.id);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getProcessesByRangeDateAndEntraceValue(start: Date, finish: Date) {
+    try {
+      const result = await this.processModel.find({
+        contractDate: {
+          $gte: start,
+          $lt: finish
+        },
+        entraceValue: {
+          $gte: 0
+        }
+      }).populate('installments').exec();
+      return result;
     } catch (error) {
       console.error(error);
       throw error;

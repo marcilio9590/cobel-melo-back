@@ -1,11 +1,15 @@
-import { Allow } from "class-validator";
+import { Type } from "class-transformer";
+import { Allow, IsDate } from "class-validator";
+import { ObjectId } from "mongoose";
 
 export class InstallmentsDTO {
 
-  process: String;
+  process: ObjectId;
 
   @Allow()
-  date: string;
+  @IsDate()
+  @Type(() => Date)
+  date: Date;
 
   @Allow()
   value: Number;

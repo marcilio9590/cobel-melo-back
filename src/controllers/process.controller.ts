@@ -28,15 +28,16 @@ export class ProcessController {
   @Patch('/:id')
   @UseGuards(JwtAuthGuard)
   @Profile([ProfileTypes.EDIT, ProfileTypes.ADMIN])
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   async update(@Param('id') id: string, @Body() processDTO: ProcessDTO, @Res() res: Response): Promise<any> {
     await this.processService.update(id, processDTO);
-    res.status(HttpStatus.CREATED).send();
+    res.status(HttpStatus.OK).send();
   }
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @UsePipes(new ValidationPipe({ whitelist: true }))
   @Profile([ProfileTypes.EDIT, ProfileTypes.ADMIN])
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   async create(@Body() createProcessDTO: ProcessDTO, @Res() res: Response): Promise<any> {
     await this.processService.create(createProcessDTO);
     res.status(HttpStatus.CREATED).send();

@@ -120,4 +120,32 @@ export class ProcessService {
     }
   }
 
+  async getCountProcessesByRangeDate(start: Date, finish: Date) {
+    try {
+      const result = await this.processModel.count({
+        contractDate: {
+          $gte: start,
+          $lt: finish
+        }
+      }).exec();
+      return result;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getAvailableYears() {
+    try {
+      const result = await this.processModel.aggregate([
+        { "$project": { "year": { "$year": "$createdAt" }, } },
+        { "$group": { "_id": null, "years": { "$addToSet": { "description": "$year", "id": "$year" } } } }
+      ]).exec();
+      return result[0]?.years;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
 }

@@ -36,7 +36,7 @@ export class DashboardsService {
     result['dayValue'] = [];
 
     for (let i = 1; i <= finishDate.getDate(); i++) {
-      let day = { x: `Dia ${i}`, y: 0, radius: null };
+      let day = { x: `Dia ${i}`, y: 0 };
       installments?.forEach(installment => {
         if (moment(installment['date']).date() === i) {
           day.y += Number(installment.value);

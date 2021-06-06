@@ -28,8 +28,6 @@ export class DashboardsService {
     const startDate = this.getStartAndFinishDate(year, month, true);
     const finishDate = this.getStartAndFinishDate(year, month, false);
 
-    // data: [[0, 1], [1, 2], [2, 4], [3, 2], [4, 7]]
-
     const processes = await this.processService.getProcessesByRangeDateAndEntraceValue(startDate, finishDate);
     const installments = await this.installmentsService.getInstallmentsByRangeDate(startDate, finishDate);
 
@@ -38,29 +36,14 @@ export class DashboardsService {
     result['dayValue'] = [];
 
     for (let i = 1; i <= finishDate.getDate(); i++) {
-      let day = [i, 0];
+      let day = { x: `Dia ${i}`, y: 0, radius: null };
       installments?.forEach(installment => {
         if (moment(installment['date']).date() === i) {
-          day[1] += Number(installment.value);
+          day.y += Number(installment.value);
         };
       });
       result['dayValue'].push(day);
     }
-
-    // for (let i = 1; i <= finishDate.getDate(); i++) {
-    //   let day = [i, 0];
-    //   processes?.forEach((process) => {
-    //     if (process.entraceValue) {
-    //       day[1] += Number(process.entraceValue);
-    //     }
-    //     process?.installments?.forEach(installment => {
-    //       if (moment(installment['date'])?.isAfter(startDate) && moment(installment['date'])?.isBefore(finishDate)) {
-    //         day[1] += Number(installment['value']);
-    //       }
-    //     });
-    //     result['dayValue'].push(day);
-    //   });
-    // }
 
     return result;
   }

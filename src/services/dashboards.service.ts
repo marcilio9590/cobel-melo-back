@@ -31,9 +31,12 @@ export class DashboardsService {
     const processes = await this.processService.getProcessesByRangeDateAndEntraceValue(startDate, finishDate);
     const installments = await this.installmentsService.getInstallmentsByRangeDate(startDate, finishDate);
 
-
     let result = {};
     result['dayValue'] = [];
+
+    if (processes?.length === 0 && installments?.length === 0) {
+      return result;
+    }
 
     for (let i = 1; i <= finishDate.getDate(); i++) {
       let day = { x: `Dia ${i}`, y: 0 };
@@ -45,6 +48,12 @@ export class DashboardsService {
       result['dayValue'].push(day);
     }
 
+    processes.forEach(p => {
+      const idx = result['dayValue'].findIndex(r => r.x.includes(moment(p.contractDate).date()));
+      if (idx >= 0) {
+        result['dayValue'][idx].y += p.entraceValue;
+      }
+    });
     return result;
   }
 

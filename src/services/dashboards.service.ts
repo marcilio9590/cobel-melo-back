@@ -32,7 +32,7 @@ export class DashboardsService {
     const finishDate = this.getStartAndFinishDate(year, month, false);
 
     const processes = await this.processService.getProcessesByRangeDateAndEntraceValue(startDate, finishDate, 'installments');
-    const installments = await this.installmentsService.getInstallmentsByRangeDate(startDate, finishDate);
+    const installments = await this.installmentsService.getInstallmentsByRangeDate(startDate, finishDate, '');
 
     let result = [];
 
@@ -66,11 +66,13 @@ export class DashboardsService {
     const finishDate = this.getStartAndFinishDate(year, month, false);
 
     try {
-      const installments = await this.installmentsService.getInstallmentsByRangeDate(startDate, finishDate);
+      const installments = await this.installmentsService.getInstallmentsByRangeDate(startDate, finishDate, 'process');
       const processes = await this.processService.getProcessesByRangeDateAndEntraceValue(startDate, finishDate, 'installments customer');
+
       if (processes?.length === 0 && installments?.length === 0) {
         return result;
       }
+
       processes.forEach(p => {
         let obj = new DashboardCustomersPaymentsDTO();
         obj.customerId = p.customer['id'];
@@ -94,12 +96,33 @@ export class DashboardsService {
           result.push(obj);
         }
       });
+
+      installments.forEach(i => {
+        let obj = new DashboardCustomersPaymentsDTO();
+        obj.customerId = i.process['customer']['id'];
+        obj.name = i.process['customer']['name'];
+        obj.payments = [];
+
+        let payment = new PaymentDTO();
+        payment.date = i.date;
+        payment.type = PaymentType.INSTALLMENT;
+        payment.value = i.value;
+        obj.payments.push(payment);
+
+        const customerIdx = result.findIndex(r => r.customerId === i.process['customer']['id']);
+        if (customerIdx > -1) {
+          if (obj.payments.length > 0) {
+            result[customerIdx].payments.push(obj.payments[0]);
+          }
+        } else {
+          result.push(obj);
+        }
+      });
+
     } catch (error) {
       console.error(error);
       throw error;
     }
-
-
     return result;
   }
 

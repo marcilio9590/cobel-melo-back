@@ -28,12 +28,18 @@ export class InstallmentsService {
     }
   }
 
-  async getInstallmentsByRangeDate(startDate: Date, finishDate: Date) {
+  async getInstallmentsByRangeDate(startDate: Date, finishDate: Date, populate: string) {
     try {
       const result = await this.installmentModel.find({
         date: {
           $gte: startDate,
           $lt: finishDate
+        }
+      }).populate({
+        path: 'process',
+        populate: {
+          path: 'customer',
+          model: 'Customer'
         }
       }).exec();
       return result;

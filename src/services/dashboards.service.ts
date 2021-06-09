@@ -119,6 +119,10 @@ export class DashboardsService {
         }
       });
 
+      result.forEach(r => {
+        r.payments.forEach(p => r.totalPayments += Number(p.value));
+      })
+
     } catch (error) {
       console.error(error);
       throw error;

@@ -6,6 +6,8 @@ export class DashboardCustomersPaymentsDTO {
 
   customerId: string;
 
+  totalPayments: number = 0;
+
   payments: PaymentDTO[];
 
 }

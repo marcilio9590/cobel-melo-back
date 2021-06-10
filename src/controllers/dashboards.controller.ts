@@ -1,10 +1,10 @@
 import { Controller, Get, HttpStatus, Query, Res, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { Response } from 'express';
 import { Profile } from "../decorators/profiles.decorator";
-import { ProfileTypes } from "../enums/profiles.enum";
 import { GetDashboardsDTO } from "../dtos/get-dashboards.dto";
-import { DashboardsService } from "../services/dashboards.service";
+import { ProfileTypes } from "../enums/profiles.enum";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
+import { DashboardsService } from "../services/dashboards.service";
 
 @Controller('/v1/dashboards')
 export class DashboardsController {
@@ -31,12 +31,21 @@ export class DashboardsController {
     res.status(HttpStatus.OK).send(result);
   }
 
-  @Get('/processes')
+  @Get('/processes/day-values')
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe())
   @Profile([ProfileTypes.ADMIN])
-  async getDashsData(@Res() res: Response, @Query() queryParams: GetDashboardsDTO) {
-    const result = await this.dashboardsService.getDashsData(queryParams.year, queryParams.month);
+  async getDayValuesData(@Res() res: Response, @Query() queryParams: GetDashboardsDTO) {
+    const result = await this.dashboardsService.getDayValuesData(queryParams.year, queryParams.month);
+    res.status(HttpStatus.OK).send(result);
+  }
+
+  @Get('/customers/payments')
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
+  @Profile([ProfileTypes.ADMIN])
+  async getCustomersPaymentsData(@Res() res: Response, @Query() queryParams: GetDashboardsDTO) {
+    const result = await this.dashboardsService.getCustomersPaymentsData(queryParams.year, queryParams.month);
     res.status(HttpStatus.OK).send(result);
   }
 

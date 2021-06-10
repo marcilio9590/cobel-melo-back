@@ -148,7 +148,7 @@ export class ProcessService {
     }
   }
 
-  async getProcessesByRangeDateAndEntraceValue(start: Date, finish: Date) {
+  async getProcessesByRangeDateAndEntraceValue(start: Date, finish: Date, populate: string) {
     try {
       const result = await this.processModel.find({
         contractDate: {
@@ -158,7 +158,7 @@ export class ProcessService {
         entraceValue: {
           $gte: 0
         }
-      }).populate('installments').exec();
+      }).populate(populate).exec();
       return result;
     } catch (error) {
       console.error(error);

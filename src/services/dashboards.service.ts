@@ -1,5 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import * as moment from 'moment';
+import { DashboardCustomersPaymentsDTO } from "../dtos/dashboards/customers-payments.dto";
+import { PaymentDTO } from "../dtos/dashboards/payment.dto";
+import { PaymentType } from "../enums/payment-type.enum";
 import { InstallmentsService } from "./installments.service";
 import { ProcessService } from "./process.service";
 
@@ -24,44 +27,106 @@ export class DashboardsService {
     return result;
   }
 
-  async getDashsData(year: string, month: string) {
+  async getDayValuesData(year: string, month: string) {
     const startDate = this.getStartAndFinishDate(year, month, true);
     const finishDate = this.getStartAndFinishDate(year, month, false);
 
-    // data: [[0, 1], [1, 2], [2, 4], [3, 2], [4, 7]]
+    const processes = await this.processService.getProcessesByRangeDateAndEntraceValue(startDate, finishDate, 'installments');
+    const installments = await this.installmentsService.getInstallmentsByRangeDate(startDate, finishDate, '');
 
-    const processes = await this.processService.getProcessesByRangeDateAndEntraceValue(startDate, finishDate);
-    const installments = await this.installmentsService.getInstallmentsByRangeDate(startDate, finishDate);
+    let result = [];
 
-
-    let result = {};
-    result['dayValue'] = [];
-
-    for (let i = 1; i <= finishDate.getDate(); i++) {
-      let day = [i, 0];
-      installments?.forEach(installment => {
-        if (moment(installment['date']).date() === i) {
-          day[1] += Number(installment.value);
-        };
-      });
-      result['dayValue'].push(day);
+    if (processes?.length === 0 && installments?.length === 0) {
+      return result;
     }
 
-    // for (let i = 1; i <= finishDate.getDate(); i++) {
-    //   let day = [i, 0];
-    //   processes?.forEach((process) => {
-    //     if (process.entraceValue) {
-    //       day[1] += Number(process.entraceValue);
-    //     }
-    //     process?.installments?.forEach(installment => {
-    //       if (moment(installment['date'])?.isAfter(startDate) && moment(installment['date'])?.isBefore(finishDate)) {
-    //         day[1] += Number(installment['value']);
-    //       }
-    //     });
-    //     result['dayValue'].push(day);
-    //   });
-    // }
+    for (let i = 1; i <= finishDate.getDate(); i++) {
+      let day = { x: `Dia ${i}`, y: 0 };
+      installments?.forEach(installment => {
+        if (moment(installment['date']).date() === i) {
+          day.y += Number(installment.value);
+        };
+      });
+      result.push(day);
+    }
 
+    processes.forEach(p => {
+      const idx = result.findIndex(r => r.x.includes(moment(p.contractDate).date()));
+      if (idx >= 0) {
+        result[idx].y += p.entraceValue;
+      }
+    });
+    return result;
+  }
+
+  async getCustomersPaymentsData(year: string, month: string) {
+    let result: DashboardCustomersPaymentsDTO[] = [];
+
+    const startDate = this.getStartAndFinishDate(year, month, true);
+    const finishDate = this.getStartAndFinishDate(year, month, false);
+
+    try {
+      const installments = await this.installmentsService.getInstallmentsByRangeDate(startDate, finishDate, 'process');
+      const processes = await this.processService.getProcessesByRangeDateAndEntraceValue(startDate, finishDate, 'installments customer');
+
+      if (processes?.length === 0 && installments?.length === 0) {
+        return result;
+      }
+
+      processes.forEach(p => {
+        let obj = new DashboardCustomersPaymentsDTO();
+        obj.customerId = p.customer['id'];
+        obj.name = p.customer['name'];
+        obj.payments = [];
+
+        if (p.entraceValue > 0) {
+          let payment = new PaymentDTO();
+          payment.date = p.contractDate;
+          payment.type = PaymentType.ENTRACE;
+          payment.value = p.entraceValue;
+          obj.payments.push(payment);
+        }
+
+        const customerIdx = result.findIndex(r => r.customerId === p.customer['id']);
+        if (customerIdx > -1) {
+          if (obj.payments.length > 0) {
+            result[customerIdx].payments.push(obj.payments[0]);
+          }
+        } else {
+          result.push(obj);
+        }
+      });
+
+      installments.forEach(i => {
+        let obj = new DashboardCustomersPaymentsDTO();
+        obj.customerId = i.process['customer']['id'];
+        obj.name = i.process['customer']['name'];
+        obj.payments = [];
+
+        let payment = new PaymentDTO();
+        payment.date = i.date;
+        payment.type = PaymentType.INSTALLMENT;
+        payment.value = i.value;
+        obj.payments.push(payment);
+
+        const customerIdx = result.findIndex(r => r.customerId === i.process['customer']['id']);
+        if (customerIdx > -1) {
+          if (obj.payments.length > 0) {
+            result[customerIdx].payments.push(obj.payments[0]);
+          }
+        } else {
+          result.push(obj);
+        }
+      });
+
+      result.forEach(r => {
+        r.payments.forEach(p => r.totalPayments += Number(p.value));
+      })
+
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
     return result;
   }
 

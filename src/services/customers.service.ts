@@ -3,7 +3,6 @@ import { Model } from "mongoose";
 import { PaginateModel } from 'mongoose-paginate-v2';
 import { CustomerDTO } from "../dtos/customer.dto";
 import { CustomerHasProcessesException } from "../exceptions/customer-has-processes.exception";
-import { DuplicateUserException } from "../exceptions/duplica-user.exception";
 import { CustomerDocument } from "../schemas/customer.schema";
 import { ProcessService } from "./process.service";
 
@@ -29,7 +28,7 @@ export class CustomersService {
     return response;
   }
 
-  async getCustomers(page, size) {
+  async getCustomers(page, size, id) {
     const options = {
       select: [
         '_id',
@@ -46,7 +45,11 @@ export class CustomersService {
       collation: { 'locale': 'en' }
     };
     try {
-      return await this.customerPaginateModel.paginate({}, options);
+      let filter = {};
+      if (id) {
+        filter['_id'] = id;
+      }
+      return await this.customerPaginateModel.paginate(filter, options);
     } catch (error) {
       console.error(error);
       throw error;

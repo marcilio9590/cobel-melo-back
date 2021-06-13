@@ -16,8 +16,9 @@ export class CustomersController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getCustomers(@Res() res: Response, @Query('page') page: Number, @Query('size') size: Number): Promise<any> {
-    const customers = await this.customersService.getCustomers(page, size);
+  async getCustomers(@Res() res: Response, @Query('page') page: Number, @Query('size') size: Number,
+    @Query('id') id: string): Promise<any> {
+    const customers = await this.customersService.getCustomers(page, size, id);
     const result = new Result('', true, customers, null);
     res.status(HttpStatus.PARTIAL_CONTENT).send(result);
   }
